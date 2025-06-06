@@ -7,7 +7,9 @@ Supports PS5 FWs:
 	- Its possible some other firmwares with the same major version has the same offsets
  - Currently can Mount only PS4 game saves, PS5 support to be added later
 
-Requires ps5debug, here is a build of [Dizz's version](https://github.com/DizzRL/ps5debug), which supports 1.xx-5.xx, uses john-tornblom's elf loader: https://github.com/idlesauce/ps5debug
+You can use [ps5debug](https://github.com/GoldHEN/ps5debug) at least version v1.0b4 for 3.xx-6.xx,  
+or you can use a ps5debug build of [Dizz's version](https://github.com/DizzRL/ps5debug), which supports 1.xx-5.xx,  
+You can use this elf loader: https://github.com/ps5-payload-dev/elfldr
 
 To get required offsets for unsupported firmwares send this to john-tornbloms elf loader, and add the results to offsets.cs (the sdk, and this build currently only supports 1.xx-5.xx, once support is added for higher fws you'll need to re-build): https://github.com/idlesauce/ps5-get-save-mounter-1.3-offsets
 
