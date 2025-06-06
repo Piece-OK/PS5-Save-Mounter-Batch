@@ -2,7 +2,7 @@
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <RootNamespace>PS4Saves</RootNamespace>
-        <AssemblyName>Playstation 4 Save Mounter</AssemblyName>
+        <AssemblyName>Playstation 5 Save Mounter</AssemblyName>
         <TargetFramework>net8.0-windows</TargetFramework>
         <FileAlignment>512</FileAlignment>
         <Deterministic>true</Deterministic>
