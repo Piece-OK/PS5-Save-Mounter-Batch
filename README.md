@@ -2,9 +2,10 @@
 This is an older version of the save mounter since its much easier to get working because it doesnt do any patching, but this has some drawbacks, read the original readme below.
 
 Supports PS5 FWs:
-- 2.50, 3.20, 4.03, 4.50, 5.xx
+- 2.50, 3.20, 4.03, 4.50, 5.xx, 6.xx
 	- 5.10 and 5.50 have the same offsets so i just assume its the same for all of 5.xx
 	- Its possible some other firmwares with the same major version has the same offsets
+ - Currently can Mount only PS4 game saves, PS5 support to be added later
 
 Requires ps5debug, here is a build of [Dizz's version](https://github.com/DizzRL/ps5debug), which supports 1.xx-5.xx, uses john-tornblom's elf loader: https://github.com/idlesauce/ps5debug
 
