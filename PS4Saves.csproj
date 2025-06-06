@@ -7,6 +7,7 @@
         <FileAlignment>512</FileAlignment>
         <Deterministic>true</Deterministic>
         <UseWindowsForms>true</UseWindowsForms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <!--<ItemGroup>
     <Reference Include="System" />

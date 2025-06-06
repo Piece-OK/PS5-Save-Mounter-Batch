@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PS4Saves
 {
@@ -75,14 +77,66 @@ namespace PS4Saves
     [StructLayout(LayoutKind.Explicit, Size = 1328)]
     public struct SceSaveDataParam
     {
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        [FieldOffset(0x0)] public string title;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        [FieldOffset(0x80)] public string subTitle;
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]
-        [FieldOffset(0x100)] public string detail;
-        [FieldOffset(0x500)] public uint userParam;
-        [FieldOffset(0x508)] public long mtime;
+        [FieldOffset(0x0)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        private byte[] _title;
+
+        [FieldOffset(0x80)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
+        private byte[] _subTitle;
+
+        [FieldOffset(0x100)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
+        private byte[] _detail;
+
+        [FieldOffset(0x500)]
+        public uint userParam;
+
+        [FieldOffset(0x508)]
+        public long mtime;
+
+        public string Title
+        {
+            get => GetUtf8String(_title);
+            set => SetUtf8String(value, ref _title, 128);
+        }
+
+        public string SubTitle
+        {
+            get => GetUtf8String(_subTitle);
+            set => SetUtf8String(value, ref _subTitle, 128);
+        }
+
+        public string Detail
+        {
+            get => GetUtf8String(_detail);
+            set => SetUtf8String(value, ref _detail, 1024);
+        }
+
+        private static string GetUtf8String(byte[] buffer)
+        {
+            if (buffer == null) return string.Empty;
+            int length = Array.IndexOf(buffer, (byte)0);
+            if (length < 0) length = buffer.Length;
+            return Encoding.UTF8.GetString(buffer, 0, length);
+        }
+
+        private static void SetUtf8String(string value, ref byte[] buffer, int maxLength)
+        {
+            if (buffer == null || buffer.Length != maxLength)
+                buffer = new byte[maxLength];
+
+            Array.Clear(buffer, 0, buffer.Length);
+
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            byte[] utf8Bytes = Encoding.UTF8.GetBytes(value);
+            int count = Math.Min(utf8Bytes.Length, maxLength - 1); // Deixa 1 byte pro null terminator
+
+            Array.Copy(utf8Bytes, buffer, count);
+            buffer[count] = 0; // null-terminator
+        }
     }
     [StructLayout(LayoutKind.Sequential, Size = 48)]
     public struct SceSaveDataSearchInfo

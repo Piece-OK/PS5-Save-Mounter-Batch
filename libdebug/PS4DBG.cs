@@ -23,7 +23,7 @@ namespace libdebug
         private const string LIBRARY_VERSION = "1.2";
         private const int PS4DBG_PORT = 744;
         private const int PS4DBG_DEBUG_PORT = 755;
-        private const int NET_MAX_LENGTH = 8192;
+        private const int NET_MAX_LENGTH = 0x20000;
 
         private const int BROADCAST_PORT = 1010;
         private const uint BROADCAST_MAGIC = 0xFFFFAAAA;
@@ -297,8 +297,8 @@ namespace libdebug
             int recv = 0;
             while (left > 0)
             {
-                byte[] b = new byte[NET_MAX_LENGTH];
-                recv = sock.Receive(b, NET_MAX_LENGTH, SocketFlags.None);
+                byte[] b = new byte[Math.Min(length, NET_MAX_LENGTH)];
+                recv = sock.Receive(b, b.Length, SocketFlags.None);
                 s.Write(b, 0, recv);
                 left -= recv;
             }
@@ -312,9 +312,16 @@ namespace libdebug
         }
         private CMD_STATUS ReceiveStatus()
         {
-            byte[] status = new byte[4];
-            sock.Receive(status, 4, SocketFlags.None);
-            return (CMD_STATUS)BitConverter.ToUInt32(status, 0);
+            try
+            {
+                byte[] status = new byte[4];
+                sock.Receive(status, 4, SocketFlags.None);
+                return (CMD_STATUS)BitConverter.ToUInt32(status, 0);
+            }
+            catch
+            {
+                return CMD_STATUS.CMD_DATA_NULL;
+            }
         }
         private void CheckStatus()
         {
@@ -385,7 +392,7 @@ namespace libdebug
             UdpClient uc = new UdpClient();
             IPEndPoint server = new IPEndPoint(IPAddress.Any, 0);
             uc.EnableBroadcast = true;
-            uc.Client.ReceiveTimeout = 4000;
+            uc.Client.ReceiveTimeout = 10000;
 
             byte[] magic = BitConverter.GetBytes(BROADCAST_MAGIC);
 
@@ -426,7 +433,7 @@ namespace libdebug
                 sock.ReceiveBufferSize = NET_MAX_LENGTH;
                 sock.SendBufferSize = NET_MAX_LENGTH;
 
-                sock.ReceiveTimeout = 1000 * 10;
+                sock.ReceiveTimeout = -1;
                 IAsyncResult result = sock.BeginConnect(enp, null, null);
                 IsConnected = result.AsyncWaitHandle.WaitOne(3000);
             }

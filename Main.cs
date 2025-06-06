@@ -16,7 +16,7 @@ namespace PS4Saves
         private ulong libSceSaveDataBase = 0x0;
         private int user = 0x0;
         string mp = "";
-        bool log = false;
+        bool log = true;
 
         public Main()
         {
@@ -241,7 +241,7 @@ namespace PS4Saves
 
         private void mountButton_Click(object sender, EventArgs e)
         {
-            if (dirsComboBox.Items.Count == 0)
+            if (dirsComboBox.Text.Length == 0)
             {
                 return;
             }
@@ -414,9 +414,9 @@ namespace PS4Saves
                     sEntries[i] = new SearchEntry
                     {
                         dirName = ps4.ReadMemory<string>(pid, searchResult.dirNames + i * 32),
-                        title = tmp.title,
-                        subtitle = tmp.subTitle,
-                        detail = tmp.detail,
+                        title = tmp.Title,
+                        subtitle = tmp.SubTitle,
+                        detail = tmp.Detail,
                         time = new DateTime(1970, 1, 1).ToLocalTime().AddSeconds(tmp.mtime).ToString(),
                     };
                 }
