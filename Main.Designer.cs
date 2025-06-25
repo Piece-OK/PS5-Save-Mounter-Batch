@@ -40,6 +40,7 @@
             mountButton = new System.Windows.Forms.Button();
             unmountButton = new System.Windows.Forms.Button();
             connectionGroupBox = new System.Windows.Forms.GroupBox();
+            label2 = new System.Windows.Forms.Label();
             ipLabel = new System.Windows.Forms.Label();
             createGroupBox = new System.Windows.Forms.GroupBox();
             sizeLabel = new System.Windows.Forms.Label();
@@ -60,7 +61,6 @@
             titleLabel = new System.Windows.Forms.Label();
             sizeToolTip = new System.Windows.Forms.ToolTip(components);
             statusLabel = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
             connectionGroupBox.SuspendLayout();
             createGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)sizeTrackBar).BeginInit();
@@ -192,6 +192,16 @@
             connectionGroupBox.TabIndex = 10;
             connectionGroupBox.TabStop = false;
             connectionGroupBox.Text = "Connection";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(8, 54);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(148, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Detected firmware version:";
             // 
             // ipLabel
             // 
@@ -406,16 +416,6 @@
             statusLabel.TabIndex = 13;
             statusLabel.Text = "Status:";
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(8, 54);
-            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(148, 15);
-            label2.TabIndex = 6;
-            label2.Text = "Detected firmware version:";
-            // 
             // Main
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -428,7 +428,7 @@
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 4 Save Mounter 1.4 [ps4debug]";
+            Text = "Playstation 5 Save Mounter 1.4 [ps5debug]";
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
             createGroupBox.ResumeLayout(false);

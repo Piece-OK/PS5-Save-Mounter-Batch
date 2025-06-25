@@ -1,17 +1,32 @@
-# Playstation 4 Save Mounter 1.3
-This is an older version of the save mounter since its much easier to get working because it doesnt do any patching, but this has some drawbacks, read the original readme below.
+# Playstation 5 Save Mounter 1.4
+This version is using patching so save data can be mounted without launching the game.
+It solves the issue of failing to mount specific game saves, as they were already mounted on game boot.
+Read the original readme below.
 
 Supports PS5 FWs:
-- 2.50, 3.20, 4.03, 4.50, 5.xx, 6.xx
-	- 5.10 and 5.50 have the same offsets so i just assume its the same for all of 5.xx
-	- Its possible some other firmwares with the same major version has the same offsets
- - Currently can Mount only PS4 game saves, PS5 support to be added later
+- 3.20, 7.40, 8.20, 10.01
+	- If you have another FW version which is the same major version, it'll try to use the available offsets. This might now work, there's also a warning in the program.
+- Currently can only mounts PS4 game saves, no PS5 game support at the moment.
 
 You can use [ps5debug](https://github.com/GoldHEN/ps5debug) at least version v1.0b4 for 3.xx-6.xx,  
 or you can use a ps5debug build of [Dizz's version](https://github.com/DizzRL/ps5debug), which supports 1.xx-5.xx,  
 You can use this elf loader: https://github.com/ps5-payload-dev/elfldr
 
-To get required offsets for unsupported firmwares send this to john-tornbloms elf loader, and add the results to offsets.cs (the sdk, and this build currently only supports 1.xx-5.xx, once support is added for higher fws you'll need to re-build): https://github.com/idlesauce/ps5-get-save-mounter-1.3-offsets
+
+## Instructions (mouting existing saves)
+1) Load ps5debug.
+3) Load FTP.
+4) Open the tool.
+5) Enter the IP address of your ps5 and click 'Connect'.
+7) Click 'Setup' and select your username.
+6) Click 'Get Games' and select your game in the combobox.
+8) Click 'Search'.
+9) Select the save you want to mount in the combobox.
+11) Click 'Mount'.
+12) Your save is now mounted and accessible from FTP in `/mnt/pfs/` or `/mnt/sandbox/{title}/savedataX` (it's the same just a different dir)
+13) After you're done copying/replacing files click 'Unmount'
+
+**don't replace files in sce_sys directory, it is unnecessary and will probably corrupt your save**
 
 ---
 
