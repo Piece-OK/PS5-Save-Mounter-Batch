@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
 
 namespace PS4Saves
 {
@@ -14,19 +17,17 @@ namespace PS4Saves
         private ulong stub;
         private ulong libSceUserServiceBase = 0x0;
         private ulong libSceSaveDataBase = 0x0;
+        private ulong executableBase = 0x0;
+        private ulong libSceLibcInternalBase = 0x0;
+        private ulong GetSaveDirectoriesAddr = 0;
         private int user = 0x0;
+        private string selectedGame = null;
         string mp = "";
         bool log = true;
 
         public Main()
         {
             InitializeComponent();
-            fwVersionComboBox.Items.AddRange(Offsets.Firmwares);
-            // fwVersionComboBox.SelectedItem = Offsets.SelectedFirmware;
-            fwVersionComboBox.SelectedValueChanged += (sender, e) =>
-            {
-                Offsets.SelectedFirmware = fwVersionComboBox.SelectedItem.ToString();
-            };
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length == 2 && args[1] == "-log")
@@ -102,6 +103,19 @@ namespace PS4Saves
                 Console.WriteLine(logStr);
             }
         }
+        private void matchExactFWVersion(int fwVersion)
+        {
+            String detectedFirmware = ((double)fwVersion / 100).ToString("F2");
+            Offsets.SelectedFirmware = detectedFirmware;
+            label2.Text += " " + detectedFirmware;
+        }
+        private void matchLooseFWVersion(int fwVersion, String relatedFwVersion)
+        {
+            String detectedFirmware = ((double)fwVersion / 100).ToString("F2");
+            Offsets.SelectedFirmware = relatedFwVersion;
+            label2.Text += " " + detectedFirmware + ". Using FW " + relatedFwVersion + " offsets that might not work";
+            label2.ForeColor = System.Drawing.Color.Red;
+        }
         private void connectButton_Click(object sender, EventArgs e)
         {
             try
@@ -124,44 +138,87 @@ namespace PS4Saves
                         sw.Write(ipTextBox.Text);
                     }
                 }
+
+                int version = ps4.GetExtFWVersion();
+                if (version == 320 || version == 740 || version == 820 || version == 1001)
+                {
+                    matchExactFWVersion(version);
+                }
+                else if (version >= 300 && version < 400)
+                {
+                    matchLooseFWVersion(version, "3.20");
+                }
+                else if (version >= 700 && version < 800)
+                {
+                    matchLooseFWVersion(version, "7.40");
+                }
+                else if (version >= 800 && version < 900)
+                {
+                    matchLooseFWVersion(version, "8.20");
+                }
+                else if (version >= 1000 && version < 1100)
+                {
+                    matchLooseFWVersion(version, "10.01");
+                }
+                else
+                {
+                    MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2") + "\nExiting.");
+                    System.Windows.Forms.Application.Exit();
+                }
+                
             }
             catch
             {
                 SetStatus("Failed To Connect");
             }
         }
-
-        private Process[] filter(ProcessList list)
+        private string[] GetSaveDirectories()
         {
-            List<Process> procs = new List<Process>();
-            for (int i = 0; i < list.processes.Length; i++)
+            var dirs = new List<string>();
+            var mem = ps4.AllocateMemory(pid, 0x8000);
+            var path = mem;
+            var buffer = mem + 0x101;
+
+            ps4.WriteMemory(pid, path, $"/user/home/{GetUser():x}/savedata/");
+            var ret = (int)ps4.Call(pid, stub, GetSaveDirectoriesAddr, path, buffer);
+            if (ret != -1 && ret != 0)
             {
-                if (list.processes[i].name == "eboot.bin" || list.processes[i].name.EndsWith(".elf"))
+                var bDirs = ps4.ReadMemory(pid, buffer, ret * 0x10);
+                for (var i = 0; i < ret; i++)
                 {
-                    procs.Add(list.processes[i]);
+                    var sDir = System.Text.Encoding.UTF8.GetString(PS4DBG.SubArray(bDirs, i * 10, 9));
+                    if (sDir.StartsWith("CUSA") || sDir.StartsWith("PPSA")) {
+                        dirs.Add(sDir);
+                    }
                 }
             }
-            return procs.ToArray();
-        }
 
-        private void processesButton_Click(object sender, EventArgs e)
+            ps4.FreeMemory(pid, mem, 0x8000);
+            return dirs.ToArray();
+        }
+        private void gamesButton_Click(object sender, EventArgs e)
         {
             if (!ps4.IsConnected)
             {
                 SetStatus("Not Connected");
                 return;
             }
-            processesComboBox.DataSource = filter(ps4.GetProcessList());
-            SetStatus("Refreshed Processes");
+            var dirs = GetSaveDirectories();
+            gamesComboBox.DataSource = dirs;
+            SetStatus("Refreshed Games");
         }
 
         private void setupButton_Click(object sender, EventArgs e)
         {
-            if (pid == 0)
+            var pl = ps4.GetProcessList();
+            var shellcoreui = pl.FindProcess("SceShellUI");
+            if (shellcoreui == null)
             {
-                SetStatus("No Process Selected");
+                SetStatus("Couldn't find SceShellUI");
                 return;
             }
+            pid = shellcoreui.pid;
+
             var pm = ps4.GetProcessMaps(pid);
             var tmp = pm.FindEntry("libSceSaveData.sprx")?.start;
             if (tmp == null)
@@ -179,6 +236,22 @@ namespace PS4Saves
             }
             libSceUserServiceBase = (ulong)tmp;
 
+            tmp = pm.FindEntry("executable")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("executable not found", "Error");
+                return;
+            }
+            executableBase = (ulong)tmp;
+
+            tmp = pm.FindEntry("libSceLibcInternal.sprx")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("libc not found", "Error");
+                return;
+            }
+            libSceLibcInternalBase = (ulong)tmp;
+
             stub = ps4.InstallRPC(pid); // dummy in ps5debug
 
             var ids = GetLoginList();
@@ -195,30 +268,79 @@ namespace PS4Saves
 
             var ret = ps4.Call(pid, stub, libSceSaveDataBase + Offsets.sceSaveDataInitialize3);
             WriteLog($"sceSaveDataInitialize3 ret = 0x{ret:X}");
-            //PATCHES
-            //shows sce_ saves but doesn't mount them
-            /*ps4.WriteMemory(pid, libSceSaveDataBase + 0x32998, "///");
-              ps4.WriteMemory(pid, libSceSaveDataBase + 0x31694, "///");
-              ps4.WriteMemory(pid, libSceSaveDataBase + 0x31699, "///");*/
 
+            //PATCHES
+            //SHELLCORE PATCHES (SceShellCore)
+            ApplyShellcorePatches(pl);
+            //WRITE CUSTOM FUNCTIONS (libSceLibcInternal)
+            ApplyCustomFunctions();
 
             SetStatus("Setup Done :)");
         }
 
-        private void searchButton_Click(object sender, EventArgs e)
+        public void ApplyShellcorePatches(ProcessList pl)
         {
-            if (pid == 0)
+            var shellcore = pl.FindProcess("SceShellCore");
+            var shellcore_maps = ps4.GetProcessMaps(shellcore.pid);
+            var ex = shellcore_maps.FindEntry("executable");
+
+            ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_ALL);
+
+            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmware);
+
+            if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
-                SetStatus("No Process Selected");
+                // Loop through each patch and apply it
+                foreach (var patch in patchesToApply)
+                {
+                    ulong targetAddress = ex.start + patch.Offset;
+                    if (patch.IsSingleBytePatch)
+                    {
+                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.SingleByte);
+                    }
+                    else
+                    {
+                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.Bytes);
+                    }
+                }
+            }
+            else
+            {
+                SetStatus("Setup failed as no patches were found");
                 return;
             }
-            var pm = ps4.GetProcessMaps(pid);
 
-            var dirNameAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataDirName)) * 1024);
-            var paramAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataParam)) * 1024);
+            ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_EXECUTE);
+        }
+
+        private void ApplyCustomFunctions()
+        {
+            // Allocate memory for custom functions
+            GetSaveDirectoriesAddr = ps4.AllocateMemory(pid, 0x8000);
+
+            ps4.WriteMemory(pid, GetSaveDirectoriesAddr, functions.GetSaveDirectories);
+
+            List<Patch> patchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmware);
+
+            if (patchesToApply.Count > 0) // Check if there are any patches to apply
+            {
+                // Loop through each patch and apply it
+                foreach (var patch in patchesToApply)
+                {
+                    ulong targetAddress = GetSaveDirectoriesAddr + patch.Offset;
+                    ps4.WriteMemory(pid, targetAddress, libSceLibcInternalBase + patch.FunctionOffset);
+                }
+            }
+        }
+        private void searchButton_Click(object sender, EventArgs e)
+        {
+            var dirNameAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataDirName)) * 1024 + 0x10 + Marshal.SizeOf(typeof(SceSaveDataParam)) * 1024);
+            var titleIdAddr = dirNameAddr + (uint)Marshal.SizeOf(typeof(SceSaveDataDirName)) * 1024;
+            var paramAddr = titleIdAddr + 0x10;
             SceSaveDataDirNameSearchCond searchCond = new SceSaveDataDirNameSearchCond
             {
-                userId = GetUser()
+                userId = GetUser(),
+                titleId = titleIdAddr
             };
             SceSaveDataDirNameSearchResult searchResult = new SceSaveDataDirNameSearchResult
             {
@@ -226,6 +348,7 @@ namespace PS4Saves
                 dirNamesNum = 1024,
                 param = paramAddr,
             };
+            ps4.WriteMemory(pid, titleIdAddr, selectedGame);
             dirsComboBox.DataSource = Find(searchCond, searchResult);
             ps4.FreeMemory(pid, dirNameAddr, Marshal.SizeOf(typeof(SceSaveDataDirName)) * 1024);
             ps4.FreeMemory(pid, paramAddr, Marshal.SizeOf(typeof(SceSaveDataParam)) * 1024);
@@ -245,19 +368,24 @@ namespace PS4Saves
             {
                 return;
             }
-            var dirNameAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataDirName)));
+            var dirNameAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataDirName)) + 0x10 + 0x41);
+            var titleIdAddr = dirNameAddr + (uint)Marshal.SizeOf(typeof(SceSaveDataDirName));
+            var fingerprintAddr = titleIdAddr + 0x10;
+            ps4.WriteMemory(pid, titleIdAddr, selectedGame);
+            ps4.WriteMemory(pid, fingerprintAddr, "0000000000000000000000000000000000000000000000000000000000000000");
             SceSaveDataDirName dirName = new SceSaveDataDirName
             {
                 data = dirsComboBox.Text
             };
 
-            SceSaveDataMount2 mount = new SceSaveDataMount2
+            SceSaveDataMount mount = new SceSaveDataMount
             {
                 userId = GetUser(),
                 dirName = dirNameAddr,
                 blocks = 32768,
                 mountMode = 0x8 | 0x2,
-
+                titleId = titleIdAddr,
+                fingerprint = fingerprintAddr
             };
             SceSaveDataMountResult mountResult = new SceSaveDataMountResult
             {
@@ -296,13 +424,6 @@ namespace PS4Saves
 
         private void createButton_Click(object sender, EventArgs e)
         {
-            if (pid == 0)
-            {
-                SetStatus("No Process Selected");
-                return;
-            }
-            var pm = ps4.GetProcessMaps(pid);
-
             if (nameTextBox.Text == "")
             {
                 SetStatus("No Save Name");
@@ -314,7 +435,7 @@ namespace PS4Saves
                 data = nameTextBox.Text
             };
 
-            SceSaveDataMount2 mount = new SceSaveDataMount2
+            SceSaveDataMount mount = new SceSaveDataMount
             {
                 userId = GetUser(),
                 dirName = dirNameAddr,
@@ -402,6 +523,7 @@ namespace PS4Saves
 
             ps4.WriteMemory(pid, searchCondAddr, searchCond);
             ps4.WriteMemory(pid, searchResultAddr, searchResult);
+
             var ret = ps4.Call(pid, stub, libSceSaveDataBase + Offsets.sceSaveDataDirNameSearch, searchCondAddr, searchResultAddr);
             WriteLog($"sceSaveDataDirNameSearch ret = 0x{ret:X}");
             if (ret == 0)
@@ -428,30 +550,31 @@ namespace PS4Saves
             ps4.FreeMemory(pid, searchCondAddr, Marshal.SizeOf(typeof(SceSaveDataDirNameSearchCond)));
             ps4.FreeMemory(pid, searchResultAddr, Marshal.SizeOf(typeof(SceSaveDataDirNameSearchResult)));
 
-            return new SearchEntry[0];
+            return Array.Empty<SearchEntry>();
 
         }
 
-        private string Mount(SceSaveDataMount2 mount, SceSaveDataMountResult mountResult)
+        private string Mount(SceSaveDataMount mount, SceSaveDataMountResult mountResult)
         {
-            var mountAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataMount2)));
+            var mountAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataMount)));
             var mountResultAddr = ps4.AllocateMemory(pid, Marshal.SizeOf(typeof(SceSaveDataMountResult)));
 
             ps4.WriteMemory(pid, mountAddr, mount);
             ps4.WriteMemory(pid, mountResultAddr, mountResult);
-            var ret = ps4.Call(pid, stub, libSceSaveDataBase + Offsets.sceSaveDataMount2, mountAddr, mountResultAddr);
-            WriteLog($"sceSaveDataMount2 ret = 0x{ret:X}");
+            var ret = ps4.Call(pid, stub, libSceSaveDataBase + Offsets.sceSaveDataMount, mountAddr, mountResultAddr);
+            WriteLog($"sceSaveDataMount ret = 0x{ret:X}");
+            WriteLog($"mountResultAddr ret = 0x{mountResultAddr:X}");
             if (ret == 0)
             {
                 mountResult = ps4.ReadMemory<SceSaveDataMountResult>(pid, mountResultAddr);
 
-                ps4.FreeMemory(pid, mountAddr, Marshal.SizeOf(typeof(SceSaveDataMount2)));
+                ps4.FreeMemory(pid, mountAddr, Marshal.SizeOf(typeof(SceSaveDataMount)));
                 ps4.FreeMemory(pid, mountResultAddr, Marshal.SizeOf(typeof(SceSaveDataMountResult)));
 
                 return mountResult.mountPoint.data;
             }
 
-            ps4.FreeMemory(pid, mountAddr, Marshal.SizeOf(typeof(SceSaveDataMount2)));
+            ps4.FreeMemory(pid, mountAddr, Marshal.SizeOf(typeof(SceSaveDataMount)));
             ps4.FreeMemory(pid, mountResultAddr, Marshal.SizeOf(typeof(SceSaveDataMountResult)));
 
             return "";
@@ -514,9 +637,9 @@ namespace PS4Saves
             dateTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).time;
         }
 
-        private void processesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void gamesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            pid = ((Process)processesComboBox.SelectedItem).pid;
+            selectedGame = (string)gamesComboBox.SelectedItem;
         }
 
         private void userComboBox_SelectedIndexChanged(object sender, EventArgs e)

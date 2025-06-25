@@ -4,6 +4,17 @@ using System.Text;
 
 namespace PS4Saves
 {
+    [StructLayout(LayoutKind.Explicit, Size = 80)]
+    public struct SceSaveDataMount
+    {
+        [FieldOffset(0x0)] public int userId;
+        [FieldOffset(0x8)] public ulong titleId;
+        [FieldOffset(0x10)] public ulong dirName;
+        [FieldOffset(0x18)] public ulong fingerprint;
+        [FieldOffset(0x20)] public ulong blocks;
+        [FieldOffset(0x28)] public uint mountMode;
+    }
+
     [StructLayout(LayoutKind.Explicit, Size = 64)]
     public struct SceSaveDataMount2
     {
@@ -16,8 +27,8 @@ namespace PS4Saves
     public struct SceSaveDataMountResult
     {
         [FieldOffset(0x0)] public SceSaveDataMountPoint mountPoint;
-        [FieldOffset(0x20)] public ulong requiredBlocks;
-        [FieldOffset(0x28)] public uint mountStatus;
+        [FieldOffset(0x10)] public ulong requiredBlocks;
+        [FieldOffset(0x18)] public uint mountStatus;
 
     }
 

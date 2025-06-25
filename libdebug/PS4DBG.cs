@@ -57,6 +57,7 @@ namespace libdebug
         public enum CMDS : uint
         {
             CMD_VERSION = 0xBD000001,
+            CMD_EXT_FW_VERSION = 0xBD000500,
 
             CMD_PROC_LIST = 0xBDAA0001,
             CMD_PROC_READ = 0xBDAA0002,
@@ -155,7 +156,7 @@ namespace libdebug
 
             return Encoding.ASCII.GetString(data, offset, length);
         }
-        private static byte[] SubArray(byte[] data, int offset, int length)
+        public static byte[] SubArray(byte[] data, int offset, int length)
         {
             byte[] bytes = new byte[length];
             Buffer.BlockCopy(data, offset, bytes, 0, length);
@@ -476,6 +477,20 @@ namespace libdebug
             sock.Receive(data, length, SocketFlags.None);
 
             return ConvertASCII(data, 0);
+        }
+
+        public int GetExtFWVersion()
+        {
+            CheckConnected();
+
+            SendCMDPacket(CMDS.CMD_EXT_FW_VERSION, 0);
+
+            byte[] ldata = new byte[2];
+            sock.Receive(ldata, 2, SocketFlags.None);
+
+            var ExtFWVersion = BitConverter.ToUInt16(ldata, 0);
+
+            return ExtFWVersion;
         }
     }
 }

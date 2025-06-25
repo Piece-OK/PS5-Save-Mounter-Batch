@@ -31,18 +31,16 @@
             components = new System.ComponentModel.Container();
             ipTextBox = new System.Windows.Forms.TextBox();
             connectButton = new System.Windows.Forms.Button();
-            processesButton = new System.Windows.Forms.Button();
+            gamesButton = new System.Windows.Forms.Button();
             setupButton = new System.Windows.Forms.Button();
-            processesComboBox = new System.Windows.Forms.ComboBox();
+            gamesComboBox = new System.Windows.Forms.ComboBox();
             userComboBox = new System.Windows.Forms.ComboBox();
             dirsComboBox = new System.Windows.Forms.ComboBox();
             searchButton = new System.Windows.Forms.Button();
             mountButton = new System.Windows.Forms.Button();
             unmountButton = new System.Windows.Forms.Button();
             connectionGroupBox = new System.Windows.Forms.GroupBox();
-            label2 = new System.Windows.Forms.Label();
             ipLabel = new System.Windows.Forms.Label();
-            fwVersionComboBox = new System.Windows.Forms.ComboBox();
             createGroupBox = new System.Windows.Forms.GroupBox();
             sizeLabel = new System.Windows.Forms.Label();
             sizeTrackBar = new System.Windows.Forms.TrackBar();
@@ -62,6 +60,7 @@
             titleLabel = new System.Windows.Forms.Label();
             sizeToolTip = new System.Windows.Forms.ToolTip(components);
             statusLabel = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
             connectionGroupBox.SuspendLayout();
             createGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)sizeTrackBar).BeginInit();
@@ -71,83 +70,83 @@
             // 
             // ipTextBox
             // 
-            ipTextBox.Location = new System.Drawing.Point(93, 28);
-            ipTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            ipTextBox.Location = new System.Drawing.Point(81, 22);
+            ipTextBox.Margin = new System.Windows.Forms.Padding(4);
             ipTextBox.Name = "ipTextBox";
-            ipTextBox.Size = new System.Drawing.Size(155, 26);
+            ipTextBox.Size = new System.Drawing.Size(136, 23);
             ipTextBox.TabIndex = 0;
             // 
             // connectButton
             // 
-            connectButton.Location = new System.Drawing.Point(256, 28);
-            connectButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            connectButton.Location = new System.Drawing.Point(224, 22);
+            connectButton.Margin = new System.Windows.Forms.Padding(4);
             connectButton.Name = "connectButton";
-            connectButton.Size = new System.Drawing.Size(241, 29);
+            connectButton.Size = new System.Drawing.Size(211, 23);
             connectButton.TabIndex = 1;
             connectButton.Text = "Connect";
             connectButton.UseVisualStyleBackColor = true;
             connectButton.Click += connectButton_Click;
             // 
-            // processesButton
+            // gamesButton
             // 
-            processesButton.Location = new System.Drawing.Point(8, 103);
-            processesButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            processesButton.Name = "processesButton";
-            processesButton.Size = new System.Drawing.Size(241, 30);
-            processesButton.TabIndex = 2;
-            processesButton.Text = "Get Processes";
-            processesButton.UseVisualStyleBackColor = true;
-            processesButton.Click += processesButton_Click;
+            gamesButton.Location = new System.Drawing.Point(8, 112);
+            gamesButton.Margin = new System.Windows.Forms.Padding(4);
+            gamesButton.Name = "gamesButton";
+            gamesButton.Size = new System.Drawing.Size(211, 24);
+            gamesButton.TabIndex = 2;
+            gamesButton.Text = "Get Games";
+            gamesButton.UseVisualStyleBackColor = true;
+            gamesButton.Click += gamesButton_Click;
             // 
             // setupButton
             // 
-            setupButton.Location = new System.Drawing.Point(8, 142);
-            setupButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            setupButton.Location = new System.Drawing.Point(8, 80);
+            setupButton.Margin = new System.Windows.Forms.Padding(4);
             setupButton.Name = "setupButton";
-            setupButton.Size = new System.Drawing.Size(241, 30);
+            setupButton.Size = new System.Drawing.Size(211, 24);
             setupButton.TabIndex = 3;
             setupButton.Text = "Setup";
             setupButton.UseVisualStyleBackColor = true;
             setupButton.Click += setupButton_Click;
             // 
-            // processesComboBox
+            // gamesComboBox
             // 
-            processesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            processesComboBox.FormattingEnabled = true;
-            processesComboBox.Location = new System.Drawing.Point(256, 103);
-            processesComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            processesComboBox.Name = "processesComboBox";
-            processesComboBox.Size = new System.Drawing.Size(240, 27);
-            processesComboBox.TabIndex = 4;
-            processesComboBox.SelectedIndexChanged += processesComboBox_SelectedIndexChanged;
+            gamesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            gamesComboBox.FormattingEnabled = true;
+            gamesComboBox.Location = new System.Drawing.Point(224, 112);
+            gamesComboBox.Margin = new System.Windows.Forms.Padding(4);
+            gamesComboBox.Name = "gamesComboBox";
+            gamesComboBox.Size = new System.Drawing.Size(210, 23);
+            gamesComboBox.TabIndex = 4;
+            gamesComboBox.SelectedIndexChanged += gamesComboBox_SelectedIndexChanged;
             // 
             // userComboBox
             // 
             userComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             userComboBox.FormattingEnabled = true;
-            userComboBox.Location = new System.Drawing.Point(256, 142);
-            userComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            userComboBox.Location = new System.Drawing.Point(224, 80);
+            userComboBox.Margin = new System.Windows.Forms.Padding(4);
             userComboBox.Name = "userComboBox";
-            userComboBox.Size = new System.Drawing.Size(240, 27);
+            userComboBox.Size = new System.Drawing.Size(210, 23);
             userComboBox.TabIndex = 5;
             userComboBox.SelectedIndexChanged += userComboBox_SelectedIndexChanged;
             // 
             // dirsComboBox
             // 
             dirsComboBox.FormattingEnabled = true;
-            dirsComboBox.Location = new System.Drawing.Point(257, 28);
-            dirsComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            dirsComboBox.Location = new System.Drawing.Point(225, 22);
+            dirsComboBox.Margin = new System.Windows.Forms.Padding(4);
             dirsComboBox.Name = "dirsComboBox";
-            dirsComboBox.Size = new System.Drawing.Size(239, 27);
+            dirsComboBox.Size = new System.Drawing.Size(210, 23);
             dirsComboBox.TabIndex = 7;
             dirsComboBox.SelectedIndexChanged += dirsComboBox_SelectedIndexChanged;
             // 
             // searchButton
             // 
-            searchButton.Location = new System.Drawing.Point(8, 28);
-            searchButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            searchButton.Location = new System.Drawing.Point(7, 22);
+            searchButton.Margin = new System.Windows.Forms.Padding(4);
             searchButton.Name = "searchButton";
-            searchButton.Size = new System.Drawing.Size(241, 30);
+            searchButton.Size = new System.Drawing.Size(211, 24);
             searchButton.TabIndex = 6;
             searchButton.Text = "Search";
             searchButton.UseVisualStyleBackColor = true;
@@ -155,10 +154,10 @@
             // 
             // mountButton
             // 
-            mountButton.Location = new System.Drawing.Point(8, 70);
-            mountButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            mountButton.Location = new System.Drawing.Point(7, 55);
+            mountButton.Margin = new System.Windows.Forms.Padding(4);
             mountButton.Name = "mountButton";
-            mountButton.Size = new System.Drawing.Size(241, 33);
+            mountButton.Size = new System.Drawing.Size(211, 26);
             mountButton.TabIndex = 8;
             mountButton.Text = "Mount";
             mountButton.UseVisualStyleBackColor = true;
@@ -166,10 +165,10 @@
             // 
             // unmountButton
             // 
-            unmountButton.Location = new System.Drawing.Point(256, 70);
-            unmountButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            unmountButton.Location = new System.Drawing.Point(224, 55);
+            unmountButton.Margin = new System.Windows.Forms.Padding(4);
             unmountButton.Name = "unmountButton";
-            unmountButton.Size = new System.Drawing.Size(241, 33);
+            unmountButton.Size = new System.Drawing.Size(211, 26);
             unmountButton.TabIndex = 9;
             unmountButton.Text = "Unmount";
             unmountButton.UseVisualStyleBackColor = true;
@@ -181,49 +180,28 @@
             connectionGroupBox.Controls.Add(ipLabel);
             connectionGroupBox.Controls.Add(ipTextBox);
             connectionGroupBox.Controls.Add(connectButton);
-            connectionGroupBox.Controls.Add(processesButton);
+            connectionGroupBox.Controls.Add(gamesButton);
             connectionGroupBox.Controls.Add(setupButton);
-            connectionGroupBox.Controls.Add(fwVersionComboBox);
-            connectionGroupBox.Controls.Add(processesComboBox);
             connectionGroupBox.Controls.Add(userComboBox);
-            connectionGroupBox.Location = new System.Drawing.Point(9, 17);
-            connectionGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            connectionGroupBox.Controls.Add(gamesComboBox);
+            connectionGroupBox.Location = new System.Drawing.Point(8, 13);
+            connectionGroupBox.Margin = new System.Windows.Forms.Padding(4);
             connectionGroupBox.Name = "connectionGroupBox";
-            connectionGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            connectionGroupBox.Size = new System.Drawing.Size(505, 185);
+            connectionGroupBox.Padding = new System.Windows.Forms.Padding(4);
+            connectionGroupBox.Size = new System.Drawing.Size(442, 146);
             connectionGroupBox.TabIndex = 10;
             connectionGroupBox.TabStop = false;
             connectionGroupBox.Text = "Connection";
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(9, 69);
-            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(116, 19);
-            label2.TabIndex = 6;
-            label2.Text = "Firmware version:";
-            // 
             // ipLabel
             // 
             ipLabel.AutoSize = true;
-            ipLabel.Location = new System.Drawing.Point(8, 32);
+            ipLabel.Location = new System.Drawing.Point(7, 25);
             ipLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             ipLabel.Name = "ipLabel";
-            ipLabel.Size = new System.Drawing.Size(77, 19);
+            ipLabel.Size = new System.Drawing.Size(65, 15);
             ipLabel.TabIndex = 6;
             ipLabel.Text = "IP Address:";
-            // 
-            // fwVersionComboBox
-            // 
-            fwVersionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            fwVersionComboBox.FormattingEnabled = true;
-            fwVersionComboBox.Location = new System.Drawing.Point(141, 66);
-            fwVersionComboBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            fwVersionComboBox.Name = "fwVersionComboBox";
-            fwVersionComboBox.Size = new System.Drawing.Size(356, 27);
-            fwVersionComboBox.TabIndex = 4;
             // 
             // createGroupBox
             // 
@@ -232,11 +210,11 @@
             createGroupBox.Controls.Add(nameLabel);
             createGroupBox.Controls.Add(nameTextBox);
             createGroupBox.Controls.Add(createButton);
-            createGroupBox.Location = new System.Drawing.Point(10, 376);
-            createGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            createGroupBox.Location = new System.Drawing.Point(9, 297);
+            createGroupBox.Margin = new System.Windows.Forms.Padding(4);
             createGroupBox.Name = "createGroupBox";
-            createGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            createGroupBox.Size = new System.Drawing.Size(505, 188);
+            createGroupBox.Padding = new System.Windows.Forms.Padding(4);
+            createGroupBox.Size = new System.Drawing.Size(442, 148);
             createGroupBox.TabIndex = 11;
             createGroupBox.TabStop = false;
             createGroupBox.Text = "Create New Saves";
@@ -244,21 +222,21 @@
             // sizeLabel
             // 
             sizeLabel.AutoSize = true;
-            sizeLabel.Location = new System.Drawing.Point(8, 70);
+            sizeLabel.Location = new System.Drawing.Point(7, 55);
             sizeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             sizeLabel.Name = "sizeLabel";
-            sizeLabel.Size = new System.Drawing.Size(94, 19);
+            sizeLabel.Size = new System.Drawing.Size(80, 15);
             sizeLabel.TabIndex = 9;
-            sizeLabel.Text = "max save size:";
+            sizeLabel.Text = "Max save size:";
             // 
             // sizeTrackBar
             // 
-            sizeTrackBar.Location = new System.Drawing.Point(156, 70);
-            sizeTrackBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            sizeTrackBar.Location = new System.Drawing.Point(136, 55);
+            sizeTrackBar.Margin = new System.Windows.Forms.Padding(4);
             sizeTrackBar.Maximum = 32768;
             sizeTrackBar.Minimum = 96;
             sizeTrackBar.Name = "sizeTrackBar";
-            sizeTrackBar.Size = new System.Drawing.Size(343, 50);
+            sizeTrackBar.Size = new System.Drawing.Size(300, 45);
             sizeTrackBar.TabIndex = 8;
             sizeTrackBar.Value = 96;
             sizeTrackBar.Scroll += sizeTrackBar_Scroll;
@@ -266,28 +244,28 @@
             // nameLabel
             // 
             nameLabel.AutoSize = true;
-            nameLabel.Location = new System.Drawing.Point(8, 36);
+            nameLabel.Location = new System.Drawing.Point(7, 28);
             nameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             nameLabel.Name = "nameLabel";
-            nameLabel.Size = new System.Drawing.Size(135, 19);
+            nameLabel.Size = new System.Drawing.Size(117, 15);
             nameLabel.TabIndex = 7;
-            nameLabel.Text = "save directory name:";
+            nameLabel.Text = "Save directory name:";
             // 
             // nameTextBox
             // 
-            nameTextBox.Location = new System.Drawing.Point(156, 32);
-            nameTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            nameTextBox.Location = new System.Drawing.Point(136, 25);
+            nameTextBox.Margin = new System.Windows.Forms.Padding(4);
             nameTextBox.MaxLength = 31;
             nameTextBox.Name = "nameTextBox";
-            nameTextBox.Size = new System.Drawing.Size(340, 26);
+            nameTextBox.Size = new System.Drawing.Size(298, 23);
             nameTextBox.TabIndex = 6;
             // 
             // createButton
             // 
-            createButton.Location = new System.Drawing.Point(7, 144);
-            createButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            createButton.Location = new System.Drawing.Point(6, 114);
+            createButton.Margin = new System.Windows.Forms.Padding(4);
             createButton.Name = "createButton";
-            createButton.Size = new System.Drawing.Size(489, 33);
+            createButton.Size = new System.Drawing.Size(428, 26);
             createButton.TabIndex = 6;
             createButton.Text = "Create Save";
             createButton.UseVisualStyleBackColor = true;
@@ -300,11 +278,11 @@
             mountGroupBox.Controls.Add(dirsComboBox);
             mountGroupBox.Controls.Add(mountButton);
             mountGroupBox.Controls.Add(unmountButton);
-            mountGroupBox.Location = new System.Drawing.Point(9, 212);
-            mountGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            mountGroupBox.Location = new System.Drawing.Point(8, 167);
+            mountGroupBox.Margin = new System.Windows.Forms.Padding(4);
             mountGroupBox.Name = "mountGroupBox";
-            mountGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            mountGroupBox.Size = new System.Drawing.Size(505, 155);
+            mountGroupBox.Padding = new System.Windows.Forms.Padding(4);
+            mountGroupBox.Size = new System.Drawing.Size(442, 122);
             mountGroupBox.TabIndex = 12;
             mountGroupBox.TabStop = false;
             mountGroupBox.Text = "Mount Existing Saves";
@@ -312,11 +290,11 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(8, 108);
+            label1.Location = new System.Drawing.Point(7, 85);
             label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label1.MaximumSize = new System.Drawing.Size(500, 475);
+            label1.MaximumSize = new System.Drawing.Size(438, 375);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(457, 38);
+            label1.Size = new System.Drawing.Size(391, 30);
             label1.TabIndex = 6;
             label1.Text = "Make sure to unmount before closing game, otherwise the save may get corrupted!";
             // 
@@ -330,117 +308,127 @@
             infoGroupBox.Controls.Add(subtitleLabel);
             infoGroupBox.Controls.Add(titleTextBox);
             infoGroupBox.Controls.Add(titleLabel);
-            infoGroupBox.Location = new System.Drawing.Point(523, 17);
-            infoGroupBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            infoGroupBox.Location = new System.Drawing.Point(458, 13);
+            infoGroupBox.Margin = new System.Windows.Forms.Padding(4);
             infoGroupBox.Name = "infoGroupBox";
-            infoGroupBox.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            infoGroupBox.Size = new System.Drawing.Size(528, 547);
+            infoGroupBox.Padding = new System.Windows.Forms.Padding(4);
+            infoGroupBox.Size = new System.Drawing.Size(462, 432);
             infoGroupBox.TabIndex = 12;
             infoGroupBox.TabStop = false;
             infoGroupBox.Text = "Save Info";
             // 
             // dateTextBox
             // 
-            dateTextBox.Location = new System.Drawing.Point(12, 429);
-            dateTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            dateTextBox.Location = new System.Drawing.Point(10, 339);
+            dateTextBox.Margin = new System.Windows.Forms.Padding(4);
             dateTextBox.Name = "dateTextBox";
             dateTextBox.ReadOnly = true;
-            dateTextBox.Size = new System.Drawing.Size(507, 26);
+            dateTextBox.Size = new System.Drawing.Size(444, 23);
             dateTextBox.TabIndex = 7;
             // 
             // dateLabel
             // 
             dateLabel.AutoSize = true;
-            dateLabel.Location = new System.Drawing.Point(8, 407);
+            dateLabel.Location = new System.Drawing.Point(7, 321);
             dateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             dateLabel.Name = "dateLabel";
-            dateLabel.Size = new System.Drawing.Size(39, 19);
+            dateLabel.Size = new System.Drawing.Size(33, 15);
             dateLabel.TabIndex = 6;
             dateLabel.Text = "date:";
             // 
             // detailsTextBox
             // 
-            detailsTextBox.Location = new System.Drawing.Point(12, 242);
-            detailsTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            detailsTextBox.Location = new System.Drawing.Point(10, 191);
+            detailsTextBox.Margin = new System.Windows.Forms.Padding(4);
             detailsTextBox.Multiline = true;
             detailsTextBox.Name = "detailsTextBox";
             detailsTextBox.ReadOnly = true;
-            detailsTextBox.Size = new System.Drawing.Size(507, 158);
+            detailsTextBox.Size = new System.Drawing.Size(444, 126);
             detailsTextBox.TabIndex = 5;
             // 
             // detailsLabel
             // 
             detailsLabel.AutoSize = true;
-            detailsLabel.Location = new System.Drawing.Point(8, 219);
+            detailsLabel.Location = new System.Drawing.Point(7, 173);
             detailsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             detailsLabel.Name = "detailsLabel";
-            detailsLabel.Size = new System.Drawing.Size(51, 19);
+            detailsLabel.Size = new System.Drawing.Size(44, 15);
             detailsLabel.TabIndex = 4;
             detailsLabel.Text = "details:";
             // 
             // subtitleTextBox
             // 
-            subtitleTextBox.Location = new System.Drawing.Point(12, 147);
-            subtitleTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            subtitleTextBox.Location = new System.Drawing.Point(10, 116);
+            subtitleTextBox.Margin = new System.Windows.Forms.Padding(4);
             subtitleTextBox.Multiline = true;
             subtitleTextBox.Name = "subtitleTextBox";
             subtitleTextBox.ReadOnly = true;
-            subtitleTextBox.Size = new System.Drawing.Size(507, 66);
+            subtitleTextBox.Size = new System.Drawing.Size(444, 53);
             subtitleTextBox.TabIndex = 3;
             // 
             // subtitleLabel
             // 
             subtitleLabel.AutoSize = true;
-            subtitleLabel.Location = new System.Drawing.Point(8, 124);
+            subtitleLabel.Location = new System.Drawing.Point(7, 98);
             subtitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             subtitleLabel.Name = "subtitleLabel";
-            subtitleLabel.Size = new System.Drawing.Size(57, 19);
+            subtitleLabel.Size = new System.Drawing.Size(49, 15);
             subtitleLabel.TabIndex = 2;
             subtitleLabel.Text = "subtitle:";
             // 
             // titleTextBox
             // 
-            titleTextBox.Location = new System.Drawing.Point(12, 51);
-            titleTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            titleTextBox.Location = new System.Drawing.Point(10, 40);
+            titleTextBox.Margin = new System.Windows.Forms.Padding(4);
             titleTextBox.Multiline = true;
             titleTextBox.Name = "titleTextBox";
             titleTextBox.ReadOnly = true;
-            titleTextBox.Size = new System.Drawing.Size(507, 67);
+            titleTextBox.Size = new System.Drawing.Size(444, 54);
             titleTextBox.TabIndex = 1;
             // 
             // titleLabel
             // 
             titleLabel.AutoSize = true;
-            titleLabel.Location = new System.Drawing.Point(8, 28);
+            titleLabel.Location = new System.Drawing.Point(7, 22);
             titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new System.Drawing.Size(35, 19);
+            titleLabel.Size = new System.Drawing.Size(30, 15);
             titleLabel.TabIndex = 0;
             titleLabel.Text = "title:";
             // 
             // statusLabel
             // 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new System.Drawing.Point(10, 569);
+            statusLabel.Location = new System.Drawing.Point(9, 449);
             statusLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             statusLabel.Name = "statusLabel";
-            statusLabel.Size = new System.Drawing.Size(50, 19);
+            statusLabel.Size = new System.Drawing.Size(42, 15);
             statusLabel.TabIndex = 13;
             statusLabel.Text = "Status:";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(8, 54);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(148, 15);
+            label2.TabIndex = 6;
+            label2.Text = "Detected firmware version:";
+            // 
             // Main
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 19F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1067, 597);
+            ClientSize = new System.Drawing.Size(934, 471);
             Controls.Add(statusLabel);
             Controls.Add(infoGroupBox);
             Controls.Add(mountGroupBox);
             Controls.Add(createGroupBox);
             Controls.Add(connectionGroupBox);
-            Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 4 Save Mounter 1.3.1 [ps4debug]";
+            Text = "Playstation 4 Save Mounter 1.4 [ps4debug]";
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
             createGroupBox.ResumeLayout(false);
@@ -458,9 +446,9 @@
 
         private System.Windows.Forms.TextBox ipTextBox;
         private System.Windows.Forms.Button connectButton;
-        private System.Windows.Forms.Button processesButton;
+        private System.Windows.Forms.Button gamesButton;
         private System.Windows.Forms.Button setupButton;
-        private System.Windows.Forms.ComboBox processesComboBox;
+        private System.Windows.Forms.ComboBox gamesComboBox;
         private System.Windows.Forms.ComboBox userComboBox;
         private System.Windows.Forms.ComboBox dirsComboBox;
         private System.Windows.Forms.Button searchButton;
@@ -488,7 +476,6 @@
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox fwVersionComboBox;
     }
 }
 
