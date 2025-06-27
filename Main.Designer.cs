@@ -428,7 +428,7 @@
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 5 Save Mounter 1.4 [ps5debug]";
+            Text = "Playstation 5 Save Mounter 1.4.1 [ps5debug]";
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
             createGroupBox.ResumeLayout(false);

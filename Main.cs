@@ -140,13 +140,21 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 740 || version == 820 || version == 1001)
+                if (version == 320 || version == 403 || version == 602 || version == 740 || version == 820 || version == 1001)
                 {
                     matchExactFWVersion(version);
                 }
                 else if (version >= 300 && version < 400)
                 {
                     matchLooseFWVersion(version, "3.20");
+                }
+                else if (version >= 400 && version < 500)
+                {
+                    matchLooseFWVersion(version, "4.03");
+                }
+                else if (version >= 600 && version < 700)
+                {
+                    matchLooseFWVersion(version, "6.02");
                 }
                 else if (version >= 700 && version < 800)
                 {
