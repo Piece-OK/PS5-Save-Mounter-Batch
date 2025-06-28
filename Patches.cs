@@ -2,40 +2,29 @@
 using System.Collections.Generic;
 
 namespace PS4Saves;
-public struct Patch
+public class Patch
 {
     public ulong Offset { get; }
     public ulong FunctionOffset { get; }
     public byte[] Bytes { get; }
-    public byte SingleByte { get; } // Used if it's a single byte patch
-    public bool IsSingleBytePatch { get; }
+    public byte[] OriginalBytes { get; set; }
 
     // Constructor for byte array patches
     public Patch(ulong offset, byte[] bytes)
     {
         Offset = offset;
         Bytes = bytes;
-        SingleByte = 0; // Not applicable for byte array patches
-        IsSingleBytePatch = false;
-    }
-
-    // Constructor for single byte patches
-    public Patch(ulong offset, byte singleByte)
-    {
-        Offset = offset;
-        SingleByte = singleByte;
-        Bytes = null; // Not applicable for single byte patches
-        IsSingleBytePatch = true;
+        OriginalBytes = null;
+        FunctionOffset = 0;
     }
 
     // Constructor for single byte patches
     public Patch(ulong offset, int functionOffset)
     {
         Offset = offset;
-        Bytes = null; // Not applicable for single byte patches
-        SingleByte = 0; // Not applicable for byte array patches
+        Bytes = null;
+        OriginalBytes = null;
         FunctionOffset = (ulong)functionOffset;
-        IsSingleBytePatch = false;
     }
 }
 
@@ -48,14 +37,14 @@ public static class Patches
             {
                 // Shellcore patches
                 [
-                    new(0x1493043, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x148A099, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x148A0A7, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x15246EF, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x1493043, [0x00]), // 'sce_sdmemory' patch
+                    new(0x148A099, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x148A0A7, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x15246EF, [0x00]), // 'sce_sdmemory3' patch
                     new(0xB5FAF0, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x0FCFB0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x181600, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
-                    new(0x10061C, (byte) 0xCD), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x10061C, [0xCD]), // ^ (thanks to GRModSave_Username) different patch
                     new(0x0FF359, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
                     new(0x0FD33C, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
                     new(0x0FCA14, [0x90, 0x90]), // nevah jump
@@ -75,14 +64,14 @@ public static class Patches
             {
                 // Shellcore patches
                 [
-                    new(0x172DFBA, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x17255B6, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x17255C4, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x17BE5A4, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x172DFBA, [0x00]), // 'sce_sdmemory' patch
+                    new(0x17255B6, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x17255C4, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x17BE5A4, [0x00]), // 'sce_sdmemory3' patch
                     new(0xB04C50, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x102C80, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x18BF30, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
-                    new(0x10625C, (byte) 0xCD), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x10625D, [0xCD]), // ^ (thanks to GRModSave_Username) different patch
                     new(0x104FA9, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
                     new(0x10300C, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
                     new(0x1026E4, [0x90, 0x90]), // nevah jump
@@ -102,10 +91,10 @@ public static class Patches
             {
                 // Shellcore patches
                 [
-                    new(0x18F2B0F, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x18E94BD, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x18E94CB, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x198F654, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x18F2B0F, [0x00]), // 'sce_sdmemory' patch
+                    new(0x18E94BD, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x18E94CB, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x198F654, [0x00]), // 'sce_sdmemory3' patch
                     new(0xC24780, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x11FDD0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x1BFB30, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
@@ -129,10 +118,10 @@ public static class Patches
             {
                 // Shellcore patches
                 [
-                    new(0x1AAD12E, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x1B0A257, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x1AC19ED, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x1A66751, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x1AAD12E, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1B0A257, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1AC19ED, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1A66751, [0x00]), // 'sce_sdmemory3' patch
                     new(0xD014D0, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x1204E0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x1C8520, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
@@ -156,10 +145,10 @@ public static class Patches
             {
                 // Shellcore patches
                 [
-                    new(0x1B21F98, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x1B8298F, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x1B37B2D, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x1AD8335, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x1B21F98, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1B8298F, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1B37B2D, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1AD8335, [0x00]), // 'sce_sdmemory3' patch
                     new(0xD66930, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x11F1B0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x1D2660, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
@@ -179,14 +168,41 @@ public static class Patches
             }
         },
         {
+            "9.60", new List<Patch>[]
+            {
+                // Shellcore patches
+                [
+                    new(0x1C18656, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1C873BA, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1C02BB0, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1BEC89F, [0x00]), // 'sce_sdmemory3' patch
+                    new(0xDD9860, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
+                    new(0x1265F0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
+                    new(0x1E4720, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
+                    new(0x12A2EA, [0xE9, 0x05, 0x00, 0x00]), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x1289D8, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
+                    new(0x1296C5, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
+                    new(0x126064, [0x90, 0x90]), // nevah jump
+                    new(0x126307, [0x90, 0xE9]) // always jump
+                ],
+                // Libc patches
+                [
+                    new(0x12, 0x74100), // opendir
+                    new(0x20, 0x73FB0), // readdir
+                    new(0x2E, 0x73CE0), // closedir
+                    new(0x3C, 0x75D80)  // strcpy
+                ]
+            }
+        },
+        {
             "10.01", new List<Patch>[]
             {
                 // Shellcore patches
                 [
-                    new(0x1C1B5DA, (byte) 0x00), // 'sce_sdmemory' patch
-                    new(0x1C8DC60, (byte) 0x00), // 'sce_sdmemory1' patch
-                    new(0x1C05075, (byte) 0x00), // 'sce_sdmemory2' patch
-                    new(0x1BEE286, (byte) 0x00), // 'sce_sdmemory3' patch
+                    new(0x1C1B5DA, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1C8DC60, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1C05075, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1BEE286, [0x00]), // 'sce_sdmemory3' patch
                     new(0xDCF260, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
                     new(0x1242D0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
                     new(0x1E1C50, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account

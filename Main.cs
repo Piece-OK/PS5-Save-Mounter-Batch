@@ -20,6 +20,7 @@ namespace PS4Saves
         private ulong executableBase = 0x0;
         private ulong libSceLibcInternalBase = 0x0;
         private ulong GetSaveDirectoriesAddr = 0;
+        private bool isPatched = false;
         private int user = 0x0;
         private string selectedGame = null;
         string mp = "";
@@ -118,13 +119,47 @@ namespace PS4Saves
         }
         private void connectButton_Click(object sender, EventArgs e)
         {
+            if (connectButton.Text == "Disconnect")
+            {
+                ps4.Disconnect();
+                if (ps4.IsConnected)
+                {
+                    SetStatus("Failed To Disconnect");
+                    return;
+                }
+
+                SetStatus("Disconnected");
+                connectButton.Text = "Connect";
+                label2.Text = "Detected firmware version:";
+
+                patchButton.Enabled = false;
+                unpatchButton.Enabled = false;
+
+                setupButton.Enabled = false;
+                userComboBox.Enabled = false;
+
+                gamesButton.Enabled = false;
+                gamesComboBox.Enabled = false;
+
+                searchButton.Enabled = false;
+                dirsComboBox.Enabled = false;
+
+                mountButton.Enabled = false;
+                unmountButton.Enabled = false;
+
+                nameTextBox.Enabled = false;
+                createButton.Enabled = false;
+
+                return;
+            }
+
             try
             {
                 ps4 = new PS4DBG(ipTextBox.Text);
                 ps4.Connect();
                 if (!ps4.IsConnected)
                 {
-                    throw new Exception();
+                    SetStatus("Failed To Connect");
                 }
                 SetStatus("Connected");
                 if (!File.Exists("ip"))
@@ -140,7 +175,7 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 403 || version == 602 || version == 740 || version == 820 || version == 1001)
+                if (version == 320 || version == 403 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
                 {
                     matchExactFWVersion(version);
                 }
@@ -164,6 +199,10 @@ namespace PS4Saves
                 {
                     matchLooseFWVersion(version, "8.20");
                 }
+                else if (version >= 900 && version < 1000)
+                {
+                    matchLooseFWVersion(version, "9.60");
+                }
                 else if (version >= 1000 && version < 1100)
                 {
                     matchLooseFWVersion(version, "10.01");
@@ -173,7 +212,10 @@ namespace PS4Saves
                     MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2") + "\nExiting.");
                     System.Windows.Forms.Application.Exit();
                 }
-                
+
+                connectButton.Text = "Disconnect";
+                patchButton.Enabled = true;
+                unpatchButton.Enabled = true;
             }
             catch
             {
@@ -195,14 +237,15 @@ namespace PS4Saves
                 for (var i = 0; i < ret; i++)
                 {
                     var sDir = System.Text.Encoding.UTF8.GetString(PS4DBG.SubArray(bDirs, i * 10, 9));
-                    if (sDir.StartsWith("CUSA") || sDir.StartsWith("PPSA")) {
+                    if (sDir.StartsWith("CUSA"))
+                    {
                         dirs.Add(sDir);
                     }
                 }
             }
 
             ps4.FreeMemory(pid, mem, 0x8000);
-            return dirs.ToArray();
+            return [.. dirs.Order()];
         }
         private void gamesButton_Click(object sender, EventArgs e)
         {
@@ -218,15 +261,6 @@ namespace PS4Saves
 
         private void setupButton_Click(object sender, EventArgs e)
         {
-            var pl = ps4.GetProcessList();
-            var shellcoreui = pl.FindProcess("SceShellUI");
-            if (shellcoreui == null)
-            {
-                SetStatus("Couldn't find SceShellUI");
-                return;
-            }
-            pid = shellcoreui.pid;
-
             var pm = ps4.GetProcessMaps(pid);
             var tmp = pm.FindEntry("libSceSaveData.sprx")?.start;
             if (tmp == null)
@@ -252,14 +286,6 @@ namespace PS4Saves
             }
             executableBase = (ulong)tmp;
 
-            tmp = pm.FindEntry("libSceLibcInternal.sprx")?.start;
-            if (tmp == null)
-            {
-                MessageBox.Show("libc not found", "Error");
-                return;
-            }
-            libSceLibcInternalBase = (ulong)tmp;
-
             stub = ps4.InstallRPC(pid); // dummy in ps5debug
 
             var ids = GetLoginList();
@@ -276,12 +302,6 @@ namespace PS4Saves
 
             var ret = ps4.Call(pid, stub, libSceSaveDataBase + Offsets.sceSaveDataInitialize3);
             WriteLog($"sceSaveDataInitialize3 ret = 0x{ret:X}");
-
-            //PATCHES
-            //SHELLCORE PATCHES (SceShellCore)
-            ApplyShellcorePatches(pl);
-            //WRITE CUSTOM FUNCTIONS (libSceLibcInternal)
-            ApplyCustomFunctions();
 
             SetStatus("Setup Done :)");
         }
@@ -302,19 +322,14 @@ namespace PS4Saves
                 foreach (var patch in patchesToApply)
                 {
                     ulong targetAddress = ex.start + patch.Offset;
-                    if (patch.IsSingleBytePatch)
-                    {
-                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.SingleByte);
-                    }
-                    else
-                    {
-                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.Bytes);
-                    }
+                    patch.OriginalBytes = ps4.ReadMemory(shellcore.pid, targetAddress, patch.Bytes.Length);
+
+                    ps4.WriteMemory(shellcore.pid, targetAddress, patch.Bytes);
                 }
             }
             else
             {
-                SetStatus("Setup failed as no patches were found");
+                SetStatus("Patching failed as no patches were found");
                 return;
             }
 
@@ -664,6 +679,137 @@ namespace PS4Saves
             {
                 return name;
             }
+        }
+
+        private void patchButton_Click(object sender, EventArgs e)
+        {
+            if (isPatched)
+            {
+                SetStatus("Already patched Shellcore!");
+                return;
+            }
+
+            var pl = ps4.GetProcessList();
+            var shellcoreui = pl.FindProcess("SceShellUI");
+            if (shellcoreui == null)
+            {
+                SetStatus("Couldn't find SceShellUI");
+                return;
+            }
+            pid = shellcoreui.pid;
+
+            var pm = ps4.GetProcessMaps(pid);
+            var tmp = pm.FindEntry("libSceSaveData.sprx")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("savedata lib not found", "Error");
+                return;
+            }
+            libSceSaveDataBase = (ulong)tmp;
+
+            tmp = pm.FindEntry("libSceUserService.sprx")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("user service lib not found", "Error");
+                return;
+            }
+            libSceUserServiceBase = (ulong)tmp;
+
+            tmp = pm.FindEntry("executable")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("executable not found", "Error");
+                return;
+            }
+            executableBase = (ulong)tmp;
+
+            tmp = pm.FindEntry("libSceLibcInternal.sprx")?.start;
+            if (tmp == null)
+            {
+                MessageBox.Show("libc not found", "Error");
+                return;
+            }
+            libSceLibcInternalBase = (ulong)tmp;
+
+            //SHELLCORE PATCHES (SceShellCore)
+            ApplyShellcorePatches(pl);
+
+            // Write libSceLibcInternal function addresses to custom function shellcode
+            ApplyCustomFunctions();
+
+            isPatched = true;
+
+            setupButton.Enabled = true;
+            userComboBox.Enabled = true;
+
+            gamesButton.Enabled = true;
+            gamesComboBox.Enabled = true;
+
+            searchButton.Enabled = true;
+            dirsComboBox.Enabled = true;
+
+            mountButton.Enabled = true;
+            unmountButton.Enabled = true;
+
+            nameTextBox.Enabled = true;
+            createButton.Enabled = true;
+            SetStatus("Patched Shellcore");
+        }
+
+        private void unpatchButton_Click(object sender, EventArgs e)
+        {
+            if (!isPatched)
+            {
+                SetStatus("Already unpatched Shellcore!");
+                return;
+            }
+
+            var pl = ps4.GetProcessList();
+            var shellcore = pl.FindProcess("SceShellCore");
+            var shellcore_maps = ps4.GetProcessMaps(shellcore.pid);
+            var ex = shellcore_maps.FindEntry("executable");
+
+            // Change memory mapping to RWX
+            ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_ALL);
+
+            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmware);
+
+            if (patchesToApply.Count > 0) // Check if there are any patches to apply
+            {
+                // Loop through each patch and apply it
+                foreach (var patch in patchesToApply)
+                {
+                    ulong targetAddress = ex.start + patch.Offset;
+
+                    ps4.WriteMemory(shellcore.pid, targetAddress, patch.OriginalBytes);
+                    patch.OriginalBytes = [];
+                }
+            }
+
+            // Return memory mapping to execute-only
+            ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_EXECUTE);
+
+            // Free custom function shellcode
+            ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
+            GetSaveDirectoriesAddr = 0;
+
+            isPatched = false;
+
+            setupButton.Enabled = false;
+            userComboBox.Enabled = false;
+
+            gamesButton.Enabled = false;
+            gamesComboBox.Enabled = false;
+
+            searchButton.Enabled = false;
+            dirsComboBox.Enabled = false;
+
+            mountButton.Enabled = false;
+            unmountButton.Enabled = false;
+
+            nameTextBox.Enabled = false;
+            createButton.Enabled = false;
+            SetStatus("Unpatched Shellcore");
         }
     }
 }

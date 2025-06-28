@@ -39,6 +39,8 @@
             searchButton = new System.Windows.Forms.Button();
             mountButton = new System.Windows.Forms.Button();
             unmountButton = new System.Windows.Forms.Button();
+            patchButton = new System.Windows.Forms.Button();
+            unpatchButton = new System.Windows.Forms.Button();
             connectionGroupBox = new System.Windows.Forms.GroupBox();
             label2 = new System.Windows.Forms.Label();
             ipLabel = new System.Windows.Forms.Label();
@@ -89,7 +91,8 @@
             // 
             // gamesButton
             // 
-            gamesButton.Location = new System.Drawing.Point(8, 112);
+            gamesButton.Enabled = false;
+            gamesButton.Location = new System.Drawing.Point(8, 144);
             gamesButton.Margin = new System.Windows.Forms.Padding(4);
             gamesButton.Name = "gamesButton";
             gamesButton.Size = new System.Drawing.Size(211, 24);
@@ -100,7 +103,8 @@
             // 
             // setupButton
             // 
-            setupButton.Location = new System.Drawing.Point(8, 80);
+            setupButton.Enabled = false;
+            setupButton.Location = new System.Drawing.Point(8, 112);
             setupButton.Margin = new System.Windows.Forms.Padding(4);
             setupButton.Name = "setupButton";
             setupButton.Size = new System.Drawing.Size(211, 24);
@@ -112,8 +116,9 @@
             // gamesComboBox
             // 
             gamesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            gamesComboBox.Enabled = false;
             gamesComboBox.FormattingEnabled = true;
-            gamesComboBox.Location = new System.Drawing.Point(224, 112);
+            gamesComboBox.Location = new System.Drawing.Point(224, 144);
             gamesComboBox.Margin = new System.Windows.Forms.Padding(4);
             gamesComboBox.Name = "gamesComboBox";
             gamesComboBox.Size = new System.Drawing.Size(210, 23);
@@ -123,8 +128,9 @@
             // userComboBox
             // 
             userComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            userComboBox.Enabled = false;
             userComboBox.FormattingEnabled = true;
-            userComboBox.Location = new System.Drawing.Point(224, 80);
+            userComboBox.Location = new System.Drawing.Point(224, 112);
             userComboBox.Margin = new System.Windows.Forms.Padding(4);
             userComboBox.Name = "userComboBox";
             userComboBox.Size = new System.Drawing.Size(210, 23);
@@ -133,6 +139,7 @@
             // 
             // dirsComboBox
             // 
+            dirsComboBox.Enabled = false;
             dirsComboBox.FormattingEnabled = true;
             dirsComboBox.Location = new System.Drawing.Point(225, 22);
             dirsComboBox.Margin = new System.Windows.Forms.Padding(4);
@@ -143,6 +150,7 @@
             // 
             // searchButton
             // 
+            searchButton.Enabled = false;
             searchButton.Location = new System.Drawing.Point(7, 22);
             searchButton.Margin = new System.Windows.Forms.Padding(4);
             searchButton.Name = "searchButton";
@@ -154,6 +162,7 @@
             // 
             // mountButton
             // 
+            mountButton.Enabled = false;
             mountButton.Location = new System.Drawing.Point(7, 55);
             mountButton.Margin = new System.Windows.Forms.Padding(4);
             mountButton.Name = "mountButton";
@@ -165,6 +174,7 @@
             // 
             // unmountButton
             // 
+            unmountButton.Enabled = false;
             unmountButton.Location = new System.Drawing.Point(224, 55);
             unmountButton.Margin = new System.Windows.Forms.Padding(4);
             unmountButton.Name = "unmountButton";
@@ -174,8 +184,34 @@
             unmountButton.UseVisualStyleBackColor = true;
             unmountButton.Click += unmountButton_Click;
             // 
+            // patchButton
+            // 
+            patchButton.Enabled = false;
+            patchButton.Location = new System.Drawing.Point(8, 80);
+            patchButton.Margin = new System.Windows.Forms.Padding(4);
+            patchButton.Name = "patchButton";
+            patchButton.Size = new System.Drawing.Size(211, 24);
+            patchButton.TabIndex = 14;
+            patchButton.Text = "Patch";
+            patchButton.UseVisualStyleBackColor = true;
+            patchButton.Click += patchButton_Click;
+            // 
+            // unpatchButton
+            // 
+            unpatchButton.Enabled = false;
+            unpatchButton.Location = new System.Drawing.Point(224, 80);
+            unpatchButton.Margin = new System.Windows.Forms.Padding(4);
+            unpatchButton.Name = "unpatchButton";
+            unpatchButton.Size = new System.Drawing.Size(211, 24);
+            unpatchButton.TabIndex = 15;
+            unpatchButton.Text = "Unpatch";
+            unpatchButton.UseVisualStyleBackColor = true;
+            unpatchButton.Click += unpatchButton_Click;
+            // 
             // connectionGroupBox
             // 
+            connectionGroupBox.Controls.Add(patchButton);
+            connectionGroupBox.Controls.Add(unpatchButton);
             connectionGroupBox.Controls.Add(label2);
             connectionGroupBox.Controls.Add(ipLabel);
             connectionGroupBox.Controls.Add(ipTextBox);
@@ -188,7 +224,7 @@
             connectionGroupBox.Margin = new System.Windows.Forms.Padding(4);
             connectionGroupBox.Name = "connectionGroupBox";
             connectionGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            connectionGroupBox.Size = new System.Drawing.Size(442, 146);
+            connectionGroupBox.Size = new System.Drawing.Size(442, 178);
             connectionGroupBox.TabIndex = 10;
             connectionGroupBox.TabStop = false;
             connectionGroupBox.Text = "Connection";
@@ -220,7 +256,7 @@
             createGroupBox.Controls.Add(nameLabel);
             createGroupBox.Controls.Add(nameTextBox);
             createGroupBox.Controls.Add(createButton);
-            createGroupBox.Location = new System.Drawing.Point(9, 297);
+            createGroupBox.Location = new System.Drawing.Point(9, 329);
             createGroupBox.Margin = new System.Windows.Forms.Padding(4);
             createGroupBox.Name = "createGroupBox";
             createGroupBox.Padding = new System.Windows.Forms.Padding(4);
@@ -263,6 +299,7 @@
             // 
             // nameTextBox
             // 
+            nameTextBox.Enabled = false;
             nameTextBox.Location = new System.Drawing.Point(136, 25);
             nameTextBox.Margin = new System.Windows.Forms.Padding(4);
             nameTextBox.MaxLength = 31;
@@ -272,12 +309,14 @@
             // 
             // createButton
             // 
+            createButton.Enabled = false;
             createButton.Location = new System.Drawing.Point(6, 114);
             createButton.Margin = new System.Windows.Forms.Padding(4);
             createButton.Name = "createButton";
             createButton.Size = new System.Drawing.Size(428, 26);
             createButton.TabIndex = 6;
             createButton.Text = "Create Save";
+            createButton.UseMnemonic = false;
             createButton.UseVisualStyleBackColor = true;
             createButton.Click += createButton_Click;
             // 
@@ -288,7 +327,7 @@
             mountGroupBox.Controls.Add(dirsComboBox);
             mountGroupBox.Controls.Add(mountButton);
             mountGroupBox.Controls.Add(unmountButton);
-            mountGroupBox.Location = new System.Drawing.Point(8, 167);
+            mountGroupBox.Location = new System.Drawing.Point(8, 199);
             mountGroupBox.Margin = new System.Windows.Forms.Padding(4);
             mountGroupBox.Name = "mountGroupBox";
             mountGroupBox.Padding = new System.Windows.Forms.Padding(4);
@@ -322,7 +361,7 @@
             infoGroupBox.Margin = new System.Windows.Forms.Padding(4);
             infoGroupBox.Name = "infoGroupBox";
             infoGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            infoGroupBox.Size = new System.Drawing.Size(462, 432);
+            infoGroupBox.Size = new System.Drawing.Size(462, 464);
             infoGroupBox.TabIndex = 12;
             infoGroupBox.TabStop = false;
             infoGroupBox.Text = "Save Info";
@@ -342,9 +381,9 @@
             dateLabel.Location = new System.Drawing.Point(7, 321);
             dateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             dateLabel.Name = "dateLabel";
-            dateLabel.Size = new System.Drawing.Size(33, 15);
+            dateLabel.Size = new System.Drawing.Size(34, 15);
             dateLabel.TabIndex = 6;
-            dateLabel.Text = "date:";
+            dateLabel.Text = "Date:";
             // 
             // detailsTextBox
             // 
@@ -362,9 +401,9 @@
             detailsLabel.Location = new System.Drawing.Point(7, 173);
             detailsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             detailsLabel.Name = "detailsLabel";
-            detailsLabel.Size = new System.Drawing.Size(44, 15);
+            detailsLabel.Size = new System.Drawing.Size(45, 15);
             detailsLabel.TabIndex = 4;
-            detailsLabel.Text = "details:";
+            detailsLabel.Text = "Details:";
             // 
             // subtitleTextBox
             // 
@@ -382,9 +421,9 @@
             subtitleLabel.Location = new System.Drawing.Point(7, 98);
             subtitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             subtitleLabel.Name = "subtitleLabel";
-            subtitleLabel.Size = new System.Drawing.Size(49, 15);
+            subtitleLabel.Size = new System.Drawing.Size(50, 15);
             subtitleLabel.TabIndex = 2;
-            subtitleLabel.Text = "subtitle:";
+            subtitleLabel.Text = "Subtitle:";
             // 
             // titleTextBox
             // 
@@ -402,14 +441,14 @@
             titleLabel.Location = new System.Drawing.Point(7, 22);
             titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             titleLabel.Name = "titleLabel";
-            titleLabel.Size = new System.Drawing.Size(30, 15);
+            titleLabel.Size = new System.Drawing.Size(33, 15);
             titleLabel.TabIndex = 0;
-            titleLabel.Text = "title:";
+            titleLabel.Text = "Title:";
             // 
             // statusLabel
             // 
             statusLabel.AutoSize = true;
-            statusLabel.Location = new System.Drawing.Point(9, 449);
+            statusLabel.Location = new System.Drawing.Point(9, 481);
             statusLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new System.Drawing.Size(42, 15);
@@ -420,7 +459,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(934, 471);
+            ClientSize = new System.Drawing.Size(934, 503);
             Controls.Add(statusLabel);
             Controls.Add(infoGroupBox);
             Controls.Add(mountGroupBox);
@@ -428,7 +467,7 @@
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 5 Save Mounter 1.4.1 [ps5debug]";
+            Text = "Playstation 5 Save Mounter 1.4.2 [ps5debug]";
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
             createGroupBox.ResumeLayout(false);
@@ -454,6 +493,8 @@
         private System.Windows.Forms.Button searchButton;
         private System.Windows.Forms.Button mountButton;
         private System.Windows.Forms.Button unmountButton;
+        private System.Windows.Forms.Button patchButton;
+        private System.Windows.Forms.Button unpatchButton;
         private System.Windows.Forms.GroupBox connectionGroupBox;
         private System.Windows.Forms.Label ipLabel;
         private System.Windows.Forms.GroupBox createGroupBox;
