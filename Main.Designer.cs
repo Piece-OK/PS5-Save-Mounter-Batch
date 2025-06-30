@@ -47,6 +47,7 @@ namespace PS4Saves
             label2 = new System.Windows.Forms.Label();
             ipLabel = new System.Windows.Forms.Label();
             createGroupBox = new System.Windows.Forms.GroupBox();
+            sizeSnapCheckbox = new System.Windows.Forms.CheckBox();
             sizeLabel = new System.Windows.Forms.Label();
             sizeTrackBar = new System.Windows.Forms.TrackBar();
             nameLabel = new System.Windows.Forms.Label();
@@ -253,6 +254,7 @@ namespace PS4Saves
             // 
             // createGroupBox
             // 
+            createGroupBox.Controls.Add(sizeSnapCheckbox);
             createGroupBox.Controls.Add(sizeLabel);
             createGroupBox.Controls.Add(sizeTrackBar);
             createGroupBox.Controls.Add(nameLabel);
@@ -266,6 +268,18 @@ namespace PS4Saves
             createGroupBox.TabIndex = 11;
             createGroupBox.TabStop = false;
             createGroupBox.Text = "Create New Saves";
+            // 
+            // sizeSnapCheckbox
+            // 
+            sizeSnapCheckbox.AutoSize = true;
+            sizeSnapCheckbox.Checked = true;
+            sizeSnapCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            sizeSnapCheckbox.Location = new System.Drawing.Point(10, 79);
+            sizeSnapCheckbox.Name = "sizeSnapCheckbox";
+            sizeSnapCheckbox.Size = new System.Drawing.Size(109, 19);
+            sizeSnapCheckbox.TabIndex = 11;
+            sizeSnapCheckbox.Text = "Snap size to MB";
+            sizeSnapCheckbox.UseVisualStyleBackColor = true;
             // 
             // sizeLabel
             // 
@@ -520,6 +534,7 @@ namespace PS4Saves
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox sizeSnapCheckbox;
     }
 }
 

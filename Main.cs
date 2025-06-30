@@ -62,9 +62,25 @@ namespace PS4Saves
             }
             return String.Format("{0:0.##} {1}", value, str);
         }
+        public void snapSize()
+        {
+            if (!sizeSnapCheckbox.Checked) return;
+
+            int v = sizeTrackBar.Value;
+            sizeTrackBar.Value = (int)Math.Round((double)v / 32, 2) * 32;
+        }
+        private void sizeSnapCheckbox_CheckStateChanged(object sender, EventArgs e)
+        {
+            snapSize();
+            string size = FormatSize((double)(sizeTrackBar.Value * 32768));
+            sizeToolTip.SetToolTip(sizeTrackBar, size);
+        }
+
         private void sizeTrackBar_Scroll(object sender, EventArgs e)
         {
-            sizeToolTip.SetToolTip(sizeTrackBar, FormatSize((double)(sizeTrackBar.Value * 32768)));
+            snapSize();
+            string size = FormatSize((double)(sizeTrackBar.Value * 32768));
+            sizeToolTip.SetToolTip(sizeTrackBar, size);
         }
         private void SetStatus(string msg)
         {
