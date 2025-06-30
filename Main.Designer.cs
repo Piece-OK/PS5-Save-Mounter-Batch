@@ -1,4 +1,6 @@
-﻿namespace PS4Saves
+﻿using System.Runtime.InteropServices;
+
+namespace PS4Saves
 {
     partial class Main
     {
@@ -467,7 +469,8 @@
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 5 Save Mounter 1.4.2 [ps5debug]";
+            Text = "Playstation 5 Save Mounter 1.4.3 [ps5debug]";
+            Closing += Main_Closing;
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
             createGroupBox.ResumeLayout(false);

@@ -1,9 +1,11 @@
 ﻿using libdebug;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
@@ -110,17 +112,30 @@ namespace PS4Saves
             Offsets.SelectedFirmware = detectedFirmware;
             label2.Text += " " + detectedFirmware;
         }
-        private void matchLooseFWVersion(int fwVersion, String relatedFwVersion)
+        private void matchLooseFWVersion(int fwVersion, String relatedFwVersion, bool offsetsWarning = true)
         {
             String detectedFirmware = ((double)fwVersion / 100).ToString("F2");
             Offsets.SelectedFirmware = relatedFwVersion;
-            label2.Text += " " + detectedFirmware + ". Using FW " + relatedFwVersion + " offsets that might not work";
-            label2.ForeColor = System.Drawing.Color.Red;
+            if (offsetsWarning)
+            {
+                label2.Text += " " + detectedFirmware + ". Using FW " + relatedFwVersion + " offsets that might not work";
+                label2.ForeColor = System.Drawing.Color.Red;
+            }
+            else
+            {
+                label2.Text += " " + detectedFirmware;
+            }
         }
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (connectButton.Text == "Disconnect")
             {
+                bool wasPatched = isPatched;
+                if (isPatched)
+                {
+                    unpatch();
+                }
+
                 ps4.Disconnect();
                 if (ps4.IsConnected)
                 {
@@ -128,7 +143,7 @@ namespace PS4Saves
                     return;
                 }
 
-                SetStatus("Disconnected");
+                SetStatus(wasPatched ? "Disconnected and unpatched Shellcore" : "Disconnected");
                 connectButton.Text = "Connect";
                 label2.Text = "Detected firmware version:";
 
@@ -175,9 +190,13 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 403 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
+                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
                 {
                     matchExactFWVersion(version);
+                }
+                else if (version == 940) // same as 9.60
+                {
+                    matchLooseFWVersion(version, "9.60", false);
                 }
                 else if (version >= 300 && version < 400)
                 {
@@ -186,6 +205,10 @@ namespace PS4Saves
                 else if (version >= 400 && version < 500)
                 {
                     matchLooseFWVersion(version, "4.03");
+                }
+                else if (version >= 500 && version < 600)
+                {
+                    matchLooseFWVersion(version, "5.02");
                 }
                 else if (version >= 600 && version < 700)
                 {
@@ -306,7 +329,7 @@ namespace PS4Saves
             SetStatus("Setup Done :)");
         }
 
-        public void ApplyShellcorePatches(ProcessList pl)
+        public bool ApplyShellcorePatches(ProcessList pl)
         {
             var shellcore = pl.FindProcess("SceShellCore");
             var shellcore_maps = ps4.GetProcessMaps(shellcore.pid);
@@ -318,6 +341,18 @@ namespace PS4Saves
 
             if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
+                // Verify if first patch is already applied and set status accordingly
+                var firstPatch = patchesToApply.FirstOrDefault();
+                ulong firstPatchAddress = ex.start + firstPatch.Offset;
+
+                byte[] originalBytes = ps4.ReadMemory(shellcore.pid, firstPatchAddress, firstPatch.Bytes.Length);
+                if (originalBytes.SequenceEqual(firstPatch.Bytes))
+                {
+                    SetStatus("Shellcore is already patched, so skipped applying patches again");
+                    ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_EXECUTE);
+                    return false;
+                }
+
                 // Loop through each patch and apply it
                 foreach (var patch in patchesToApply)
                 {
@@ -330,10 +365,12 @@ namespace PS4Saves
             else
             {
                 SetStatus("Patching failed as no patches were found");
-                return;
+                ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_EXECUTE);
+                return false;
             }
 
             ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_EXECUTE);
+            return true;
         }
 
         private void ApplyCustomFunctions()
@@ -732,7 +769,8 @@ namespace PS4Saves
             libSceLibcInternalBase = (ulong)tmp;
 
             //SHELLCORE PATCHES (SceShellCore)
-            ApplyShellcorePatches(pl);
+            if (ApplyShellcorePatches(pl))
+                SetStatus("Patched Shellcore");
 
             // Write libSceLibcInternal function addresses to custom function shellcode
             ApplyCustomFunctions();
@@ -753,17 +791,11 @@ namespace PS4Saves
 
             nameTextBox.Enabled = true;
             createButton.Enabled = true;
-            SetStatus("Patched Shellcore");
+            
         }
 
-        private void unpatchButton_Click(object sender, EventArgs e)
+        private void unpatch()
         {
-            if (!isPatched)
-            {
-                SetStatus("Already unpatched Shellcore!");
-                return;
-            }
-
             var pl = ps4.GetProcessList();
             var shellcore = pl.FindProcess("SceShellCore");
             var shellcore_maps = ps4.GetProcessMaps(shellcore.pid);
@@ -810,6 +842,24 @@ namespace PS4Saves
             nameTextBox.Enabled = false;
             createButton.Enabled = false;
             SetStatus("Unpatched Shellcore");
+        }
+        private void unpatchButton_Click(object sender, EventArgs e)
+        {
+            if (!isPatched)
+            {
+                SetStatus("Already unpatched Shellcore!");
+                return;
+            }
+
+            unpatch();
+        }
+
+        private void Main_Closing(object sender, CancelEventArgs e)
+        {
+            if (isPatched)
+            {
+                unpatch();
+            }
         }
     }
 }

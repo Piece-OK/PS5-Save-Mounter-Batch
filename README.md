@@ -1,10 +1,10 @@
-# Playstation 5 Save Mounter 1.4.2
+# Playstation 5 Save Mounter 1.4.3
 This version is using patching so save data can be mounted without launching the game.
 It solves the issue of failing to mount specific game saves, as they were already mounted on game boot.
 Read the original readme below.
 
 Supports PS5 FWs:
-- 3.20, 4.03, 6.02, 7.40, 8.20, 9.60, 10.01
+- 3.20, 4.03, 6.02, 7.40, 8.20, 9.40, 9.60, 10.01
 	- If you have another FW version which is the same major version, it'll try to use the available offsets. This might now work, there's also a warning in the program.
 - Currently can only mounts PS4 game saves, no PS5 game support at the moment.
 
@@ -24,7 +24,7 @@ Use this elf loader: https://github.com/ps5-payload-dev/elfldr
 10) Click 'Mount'.
 11) Your save is now mounted and accessible from FTP in `/mnt/pfs/` or `/mnt/sandbox/{title}/savedataX` (it's the same just a different dir).
 12) After copying or replacing the files, be sure to click 'Unmount'.
-13) Before launching a game, or disconnecting from the PS5 - be sure to click 'Unpatch' in order to clean the applied patches.
+13) Click 'Unpatch' before launching games or disconnecting from PS5 to clean applied patches. Note: patches are now automatically removed when the program closes or disconnects.
 
 ** Warning: Don't replace files in `sce_sys` directory, it is unnecessary and will probably corrupt your save**
 
