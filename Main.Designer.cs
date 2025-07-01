@@ -56,6 +56,7 @@ namespace PS4Saves
             mountGroupBox = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
             infoGroupBox = new System.Windows.Forms.GroupBox();
+            gameImageBox = new System.Windows.Forms.PictureBox();
             dateTextBox = new System.Windows.Forms.TextBox();
             dateLabel = new System.Windows.Forms.Label();
             detailsTextBox = new System.Windows.Forms.TextBox();
@@ -71,6 +72,7 @@ namespace PS4Saves
             ((System.ComponentModel.ISupportInitialize)sizeTrackBar).BeginInit();
             mountGroupBox.SuspendLayout();
             infoGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gameImageBox).BeginInit();
             SuspendLayout();
             // 
             // ipTextBox
@@ -365,6 +367,7 @@ namespace PS4Saves
             // 
             // infoGroupBox
             // 
+            infoGroupBox.Controls.Add(gameImageBox);
             infoGroupBox.Controls.Add(dateTextBox);
             infoGroupBox.Controls.Add(dateLabel);
             infoGroupBox.Controls.Add(detailsTextBox);
@@ -381,6 +384,14 @@ namespace PS4Saves
             infoGroupBox.TabIndex = 12;
             infoGroupBox.TabStop = false;
             infoGroupBox.Text = "Save Info";
+            // 
+            // gameImageBox
+            // 
+            gameImageBox.Location = new System.Drawing.Point(147, 369);
+            gameImageBox.Name = "gameImageBox";
+            gameImageBox.Size = new System.Drawing.Size(180, 93);
+            gameImageBox.TabIndex = 8;
+            gameImageBox.TabStop = false;
             // 
             // dateTextBox
             // 
@@ -494,6 +505,7 @@ namespace PS4Saves
             mountGroupBox.PerformLayout();
             infoGroupBox.ResumeLayout(false);
             infoGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gameImageBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -535,6 +547,7 @@ namespace PS4Saves
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox sizeSnapCheckbox;
+        private System.Windows.Forms.PictureBox gameImageBox;
     }
 }
 

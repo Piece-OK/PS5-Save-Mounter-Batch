@@ -50,12 +50,18 @@ public static class Patches
                     new(0x0FCA14, [0x90, 0x90]), // nevah jump
                     new(0x0FCCC3, [0x90, 0xE9]) // always jump
                 ],
-                // Libc patches
+                // Libc patches for save directory
                 [
                     new(0x12, 0x78D60), // opendir
                     new(0x20, 0x78C10), // readdir
                     new(0x2E, 0x78920), // closedir
-                    new(0x3C, 0x7A9E0)  // strcpy
+                    new(0x3C, 0x7A9E0), // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x16, 0x60D00), // fopen
+                    new(0x38, 0x60F90), // fread
+                    new(0x5B, 0x00470)  // fclose
                 ]
             }
         },
@@ -269,8 +275,16 @@ public static class Patches
     /// </summary>
     /// <param name="firmwareVersion">The firmware version string (e.g., "7.40").</param>
     /// <returns>A list of Patch objects for libc functions, or an empty list if no patches are defined for the version.</returns>
-    public static List<Patch> GetLibcPatches(string firmwareVersion)
+    public static List<Patch> GetLibcPatches(string firmwareVersion, bool imagePatches = false)
     {
+        if (imagePatches)
+        {
+            // TODO: refactor this
+            if (FirmwarePatches.TryGetValue(firmwareVersion, out var imgPatches)) {
+                return imgPatches[2];
+            }
+            return [];
+        }
         if (FirmwarePatches.TryGetValue(firmwareVersion, out var patches))
         {
             return patches[1]; // Libc function patches are at index 1
