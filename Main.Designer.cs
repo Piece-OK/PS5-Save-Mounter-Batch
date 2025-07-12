@@ -483,7 +483,7 @@ namespace PS4Saves
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
             Name = "Main";
-            Text = "Playstation 5 Save Mounter 1.4.3 [ps5debug]";
+            Text = "Playstation 5 Save Mounter 1.4.4 [ps5debug]";
             Closing += Main_Closing;
             connectionGroupBox.ResumeLayout(false);
             connectionGroupBox.PerformLayout();
