@@ -207,7 +207,7 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
+                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 720 || version == 740 || version == 820 || version == 960 || version == 1001)
                 {
                     matchExactFWVersion(version);
                 }
