@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using String = System.String;
 
 namespace PS4Saves
@@ -127,13 +128,13 @@ namespace PS4Saves
         }
         private void matchExactFWVersion(int fwVersion)
         {
-            String detectedFirmware = ((double)fwVersion / 100).ToString("F2");
+            String detectedFirmware = ((double)fwVersion / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
             Offsets.SelectedFirmware = detectedFirmware;
             label2.Text += " " + detectedFirmware;
         }
         private void matchLooseFWVersion(int fwVersion, String relatedFwVersion, bool offsetsWarning = true)
         {
-            String detectedFirmware = ((double)fwVersion / 100).ToString("F2");
+            String detectedFirmware = ((double)fwVersion / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
             Offsets.SelectedFirmware = relatedFwVersion;
             if (offsetsWarning)
             {
@@ -251,7 +252,7 @@ namespace PS4Saves
                 }
                 else
                 {
-                    MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2") + "\nExiting.");
+                    MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + "\nExiting.");
                     System.Windows.Forms.Application.Exit();
                 }
 
@@ -512,7 +513,7 @@ namespace PS4Saves
             ps4.FreeMemory(pid, dirNameAddr, Marshal.SizeOf(typeof(SceSaveDataDirName)));
             if (mp != "")
             {
-                SetStatus($"Save Mounted in {mp}");
+                SetStatus($"Save Mounted in /mnt/pfs/savedata_{user:x}_{selectedGame}_{dirName.data}/");
             }
             else
             {
@@ -685,7 +686,6 @@ namespace PS4Saves
 
                 ps4.FreeMemory(pid, mountAddr, Marshal.SizeOf(typeof(SceSaveDataMount)));
                 ps4.FreeMemory(pid, mountResultAddr, Marshal.SizeOf(typeof(SceSaveDataMountResult)));
-
                 return mountResult.mountPoint.data;
             }
 
@@ -746,20 +746,45 @@ namespace PS4Saves
 
         private void dirsComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            titleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).title;
-            subtitleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).subtitle;
-            detailsTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).detail;
-            dateTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).time;
+            if (dirsComboBox.SelectedItem != null)
+            {
+                titleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).title;
+                subtitleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).subtitle;
+                detailsTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).detail;
+                dateTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).time;
+            }
+            else
+            {
+                // Clear all textboxes when no item is selected
+                titleTextBox.Text = "";
+                subtitleTextBox.Text = "";
+                detailsTextBox.Text = "";
+                dateTextBox.Text = "";
+            }
         }
 
         private void gamesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selectedGame = (string)gamesComboBox.SelectedItem;
+            if (gamesComboBox.SelectedItem != null)
+            {
+                selectedGame = (string)gamesComboBox.SelectedItem;
+            }
+            else
+            {
+                selectedGame = "";
+            }
         }
 
         private void userComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            user = ((User)userComboBox.SelectedItem).id;
+            if (userComboBox.SelectedItem != null)
+            {
+                user = ((User)userComboBox.SelectedItem).id;
+            }
+            else
+            {
+                user = 0;
+            }
         }
 
         class User
@@ -881,6 +906,13 @@ namespace PS4Saves
             GetSaveDirectoriesAddr = 0;
 
             isPatched = false;
+
+            //dirsComboBox.SelectedItem = null;
+            dirsComboBox.DataSource = null;
+            //gamesComboBox.SelectedItem = null;
+            gamesComboBox.DataSource = null;
+            //userComboBox.SelectedItem = null;
+            userComboBox.DataSource = null;
 
             setupButton.Enabled = false;
             userComboBox.Enabled = false;
