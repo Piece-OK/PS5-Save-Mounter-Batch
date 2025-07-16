@@ -114,6 +114,33 @@ public static class Patches
             }
         },
         {
+            "5.50", new List<Patch>[]
+            {
+                // Shellcore patches
+                [
+                    new(0x183F338, [0x00]), // 'sce_sdmemory' patch
+                    new(0x18366E9, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x18366F7, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x18D792E, [0x00]), // 'sce_sdmemory3' patch
+                    new(0xBD1D60, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
+                    new(0x1138E0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
+                    new(0x1AAF90, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
+                    new(0x117774, [0xE9, 0x0C, 0x00, 0x00, 0x00]), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x115E38, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
+                    new(0x113C6C, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
+                    new(0x113344, [0x90, 0x90]), // nevah jump
+                    new(0x1135F3, [0x90, 0xE9]) // alays jump
+                ],
+                // Libc patches
+                [
+                    new(0x12, 0x76FD0), // opendir
+                    new(0x20, 0x76E80), // readdir
+                    new(0x2E, 0x76B90), // closedir
+                    new(0x3C, 0x78C90)  // strcpy
+                ]
+            }
+        },
+        {
             "6.02", new List<Patch>[]
             {
                 // Shellcore patches
@@ -191,6 +218,60 @@ public static class Patches
                     new(0x20, 0x75F50), // readdir
                     new(0x2E, 0x75C80), // closedir
                     new(0x3C, 0x77D20)  // strcpy
+                ]
+            }
+        },
+        {
+            "8.40", new List<Patch>[]
+            {
+                // Shellcore patches
+                [
+                    new(0x1B219EF, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1B823EC, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1B3770B, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1AD7E63, [0x00]), // 'sce_sdmemory3' patch
+                    new(0xD66930, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
+                    new(0x11F1B0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
+                    new(0x1D2660, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
+                    new(0x122EAA, [0xE9, 0x05, 0x00, 0x00]), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x121598, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
+                    new(0x122281, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
+                    new(0x11EC24, [0x90, 0x90]), // nevah jump
+                    new(0x11EEC7, [0x90, 0xE9]) // always jump
+                ],
+                // Libc patches
+                [
+                    new(0x12, 0), // opendir
+                    new(0x20, 0), // readdir
+                    new(0x2E, 0), // closedir
+                    new(0x3C, 0)  // strcpy
+                ]
+            }
+        },
+        {
+            "8.60", new List<Patch>[]
+            {
+                // Shellcore patches
+                [
+                    new(0x1B2635B, [0x00]), // 'sce_sdmemory' patch
+                    new(0x1B86AFF, [0x00]), // 'sce_sdmemory1' patch
+                    new(0x1B3BDED, [0x00]), // 'sce_sdmemory2' patch
+                    new(0x1ADC881, [0x00]), // 'sce_sdmemory3' patch
+                    new(0xD66930, [0x48, 0x31, 0xC0, 0xC3]), // verify keystone patch
+                    new(0x11F1B0, [0x31, 0xC0, 0xC3]), // transfer mount permission patch eg mount foreign saves with write permission
+                    new(0x1D2660, [0x31, 0xC0, 0xC3]), // patch psn check to load saves saves foreign to current account
+                    new(0x122EAA, [0xE9, 0x05, 0x00, 0x00]), // ^ (thanks to GRModSave_Username) different patch
+                    new(0x121598, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // something something patches...
+                    new(0x122281, [0x90, 0x90, 0x90, 0x90, 0x90, 0x90]), // don't even remember doing this
+                    new(0x11EC24, [0x90, 0x90]), // nevah jump
+                    new(0x11EEC7, [0x90, 0xE9]) // always jump
+                ],
+                // Libc patches
+                [
+                    new(0x12, 0), // opendir
+                    new(0x20, 0), // readdir
+                    new(0x2E, 0), // closedir
+                    new(0x3C, 0)  // strcpy
                 ]
             }
         },

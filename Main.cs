@@ -126,13 +126,24 @@ namespace PS4Saves
         private void matchExactFWVersion(int fwVersion)
         {
             String detectedFirmware = ((double)fwVersion / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-            Offsets.SelectedFirmware = detectedFirmware;
+            Offsets.SelectedFirmwareLibraries = detectedFirmware;
+            Offsets.SelectedFirmwareShellcore = detectedFirmware;
             label2.Text += " " + detectedFirmware;
         }
-        private void matchLooseFWVersion(int fwVersion, String relatedFwVersion, bool offsetsWarning = true)
+        private void matchLooseFWVersion(int fwVersion, String relatedFwVersion, bool offsetsWarning = true, bool differentShellcorePatches = false)
         {
             String detectedFirmware = ((double)fwVersion / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
-            Offsets.SelectedFirmware = relatedFwVersion;
+            Offsets.SelectedFirmwareLibraries = relatedFwVersion;
+
+            if (differentShellcorePatches)
+            {
+                Offsets.SelectedFirmwareShellcore = detectedFirmware;
+            }
+            else
+            {
+                Offsets.SelectedFirmwareShellcore = relatedFwVersion;
+            }
+            
             if (offsetsWarning)
             {
                 label2.Text += " " + detectedFirmware + ". Using FW " + relatedFwVersion + " offsets that might not work";
@@ -210,6 +221,10 @@ namespace PS4Saves
                 if (version == 320 || version == 403 || version == 502 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
                 {
                     matchExactFWVersion(version);
+                }
+                else if (version == 550) // same as 5.02, different shellcore patches
+                {
+                    matchLooseFWVersion(version, "5.02", false, true);
                 }
                 else if (version == 940) // same as 9.60
                 {
@@ -354,7 +369,7 @@ namespace PS4Saves
 
             ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_ALL);
 
-            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmware);
+            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmwareShellcore);
 
             if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
@@ -397,7 +412,7 @@ namespace PS4Saves
 
             ps4.WriteMemory(pid, GetSaveDirectoriesAddr, functions.GetSaveDirectories);
 
-            List<Patch> patchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmware);
+            List<Patch> patchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmwareShellcore);
 
             if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
@@ -845,7 +860,7 @@ namespace PS4Saves
             // Change memory mapping to RWX
             ps4.ChangeProtection(shellcore.pid, ex.start, (uint)(ex.end - ex.start), PS4DBG.VM_PROTECTIONS.VM_PROT_ALL);
 
-            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmware);
+            List<Patch> patchesToApply = Patches.GetShellcorePatches(Offsets.SelectedFirmwareShellcore);
 
             if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
