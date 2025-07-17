@@ -218,9 +218,13 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 720 || version == 740 || version == 820 || version == 960 || version == 1001)
+                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
                 {
                     matchExactFWVersion(version);
+                }
+                else if (version == 720) // same as 7.40, different shellcore patches
+                {
+                    matchLooseFWVersion(version, "7.40", false, true);
                 }
                 else if (version == 550) // same as 5.02, different shellcore patches
                 {

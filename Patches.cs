@@ -168,7 +168,7 @@ public static class Patches
             }
         },
         {
-            "7.20", new List<Patch>[]
+            "7.20", new List<Patch>[] // Contribution
             {
                 // Shellcore patches
                 [
