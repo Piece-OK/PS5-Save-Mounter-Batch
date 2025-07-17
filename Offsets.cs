@@ -4,10 +4,10 @@ namespace PS4Saves;
 
 public static class Offsets
 {
-    public static readonly string[] Firmwares = ["3.20", "7.40", "8.20", "10.01"];
-    public static string SelectedFirmware { get; set; } = string.Empty; // updated by Connect button
-  
-    public static ulong sceUserServiceGetInitialUser => SelectedFirmware switch
+    public static string SelectedFirmwareLibraries { get; set; } = string.Empty; // updated by Connect button
+    public static string SelectedFirmwareShellcore { get; set; } = string.Empty; // updated by Connect button
+
+    public static ulong sceUserServiceGetInitialUser => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x32E0,
         "3.20" => 0x32D0,
@@ -21,7 +21,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceUserServiceGetLoginUserIdList => SelectedFirmware switch
+    public static ulong sceUserServiceGetLoginUserIdList => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x2A50,
         "3.20" => 0x2A50,
@@ -35,7 +35,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceUserServiceGetUserName => SelectedFirmware switch
+    public static ulong sceUserServiceGetUserName => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x46A0,
         "3.20" => 0x4690,
@@ -49,7 +49,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceSaveDataMount => SelectedFirmware switch
+    public static ulong sceSaveDataMount => SelectedFirmwareLibraries switch
     {
         //"2.50" => 0x2FE00,
         "3.20" => 0x31DB0,
@@ -63,7 +63,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceSaveDataUmount => SelectedFirmware switch
+    public static ulong sceSaveDataUmount => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x302D0,
         "3.20" => 0x32560,
@@ -77,7 +77,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceSaveDataDirNameSearch => SelectedFirmware switch
+    public static ulong sceSaveDataDirNameSearch => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x310B0,
         "3.20" => 0x33340,
@@ -91,7 +91,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceSaveDataTransferringMount => SelectedFirmware switch
+    public static ulong sceSaveDataTransferringMount => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x30180,
         "3.20" => 0x32410,
@@ -105,7 +105,7 @@ public static class Offsets
         _ => throw new Exception("Unsupported firmware (did you select an item from the dropdown?)")
     };
 
-    public static ulong sceSaveDataInitialize3 => SelectedFirmware switch
+    public static ulong sceSaveDataInitialize3 => SelectedFirmwareLibraries switch
     {
         "2.50" => 0x2F970,
         "3.20" => 0x31C00,
