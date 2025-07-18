@@ -939,7 +939,7 @@ namespace PS4Saves
 
             // Free custom function shellcode
             ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
-            ps4.FreeMemory(pid, GetGameImageAddr, 0x100000);
+            ps4.FreeMemory(pid, GetGameImageAddr, 0x8000);
             GetSaveDirectoriesAddr = 0;
             GetGameImageAddr = 0;
 
