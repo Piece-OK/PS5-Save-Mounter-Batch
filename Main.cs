@@ -24,7 +24,7 @@ namespace PS4Saves
         private ulong executableBase = 0x0;
         private ulong libSceLibcInternalBase = 0x0;
         private ulong GetSaveDirectoriesAddr = 0;
-        private ulong GetGameImagesAddr = 0;
+        private ulong GetGameImageAddr = 0;
         private bool isPatched = false;
         private int user = 0x0;
         private string selectedGame = null;
@@ -317,7 +317,7 @@ namespace PS4Saves
             var buffer = mem + 0x201;
 
             ps4.WriteMemory(pid, path, $"/user/appmeta/{game}/icon0.png");
-            var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
+            var ret = (int)ps4.Call(pid, stub, GetGameImageAddr, path, buffer);
             if (ret != -1 && ret != 0)
             {
                 var image = ps4.ReadMemory(pid, buffer, ret * mem_size);
@@ -440,10 +440,10 @@ namespace PS4Saves
         {
             // Allocate memory for custom functions
             GetSaveDirectoriesAddr = ps4.AllocateMemory(pid, 0x8000);
-            GetGameImagesAddr = ps4.AllocateMemory(pid, 0x8000);
+            GetGameImageAddr = ps4.AllocateMemory(pid, 0x8000);
 
             ps4.WriteMemory(pid, GetSaveDirectoriesAddr, functions.GetSaveDirectories);
-            ps4.WriteMemory(pid, GetGameImagesAddr, functions.GetGameImages);
+            ps4.WriteMemory(pid, GetGameImageAddr, functions.GetGameImage);
 
             List<Patch> patchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmwareShellcore);
             List<Patch> imagePatchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmwareShellcore, true);
@@ -461,7 +461,7 @@ namespace PS4Saves
             {
                 foreach (var patch in imagePatchesToApply)
                 {
-                    ulong targetAddress = GetGameImagesAddr + patch.Offset;
+                    ulong targetAddress = GetGameImageAddr + patch.Offset;
                     ps4.WriteMemory(pid, targetAddress, libSceLibcInternalBase + patch.FunctionOffset);
                 }
             }
@@ -781,6 +781,15 @@ namespace PS4Saves
             }
         }
 
+        private void clearSavedataInfo()
+        {
+            dirsComboBox.DataSource = null;
+            titleTextBox.Text = "";
+            subtitleTextBox.Text = "";
+            detailsTextBox.Text = "";
+            dateTextBox.Text = "";
+        }
+
         private void gamesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (gamesComboBox.SelectedItem != null)
@@ -788,10 +797,13 @@ namespace PS4Saves
                 selectedGame = (string)gamesComboBox.SelectedItem;
                 var image = GetGameImage(selectedGame);
                 gameImageBox.Image = image;
+                clearSavedataInfo();
             }
             else
             {
                 selectedGame = "";
+                clearSavedataInfo();
+                gameImageBox.Image = null;
             }
         }
 
@@ -927,9 +939,9 @@ namespace PS4Saves
 
             // Free custom function shellcode
             ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
-            ps4.FreeMemory(pid, GetGameImagesAddr, 0x100000);
+            ps4.FreeMemory(pid, GetGameImageAddr, 0x100000);
             GetSaveDirectoriesAddr = 0;
-            GetGameImagesAddr = 0;
+            GetGameImageAddr = 0;
 
             isPatched = false;
 
