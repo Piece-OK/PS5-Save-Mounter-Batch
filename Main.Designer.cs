@@ -387,15 +387,15 @@ namespace PS4Saves
             // 
             // gameImageBox
             // 
-            gameImageBox.Location = new System.Drawing.Point(147, 369);
+            gameImageBox.Location = new System.Drawing.Point(121, 334);
             gameImageBox.Name = "gameImageBox";
-            gameImageBox.Size = new System.Drawing.Size(180, 93);
+            gameImageBox.Size = new System.Drawing.Size(236, 122);
             gameImageBox.TabIndex = 8;
             gameImageBox.TabStop = false;
             // 
             // dateTextBox
             // 
-            dateTextBox.Location = new System.Drawing.Point(10, 339);
+            dateTextBox.Location = new System.Drawing.Point(10, 304);
             dateTextBox.Margin = new System.Windows.Forms.Padding(4);
             dateTextBox.Name = "dateTextBox";
             dateTextBox.ReadOnly = true;
@@ -405,7 +405,7 @@ namespace PS4Saves
             // dateLabel
             // 
             dateLabel.AutoSize = true;
-            dateLabel.Location = new System.Drawing.Point(7, 321);
+            dateLabel.Location = new System.Drawing.Point(7, 286);
             dateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             dateLabel.Name = "dateLabel";
             dateLabel.Size = new System.Drawing.Size(34, 15);
@@ -419,7 +419,7 @@ namespace PS4Saves
             detailsTextBox.Multiline = true;
             detailsTextBox.Name = "detailsTextBox";
             detailsTextBox.ReadOnly = true;
-            detailsTextBox.Size = new System.Drawing.Size(444, 126);
+            detailsTextBox.Size = new System.Drawing.Size(444, 89);
             detailsTextBox.TabIndex = 5;
             // 
             // detailsLabel

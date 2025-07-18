@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -309,31 +310,28 @@ namespace PS4Saves
             ps4.FreeMemory(pid, mem, 0x8000);
             return [.. dirs.Order()];
         }
-        private List<Image> GetGameImages(IEnumerable<string> games)
+        private Image GetGameImage(string game)
         {
             var mem = ps4.AllocateMemory(pid, 0xA2800); // enough memory for the image
             var path = mem;
             var buffer = mem + 0x201;
 
-            foreach (var game in games)
+            ps4.WriteMemory(pid, path, $"/user/appmeta/{game}/icon0.png");
+            var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
+            if (ret != -1 && ret != 0)
             {
-                ps4.WriteMemory(pid, path, $"/user/appmeta/{game}/icon0.png");
-                var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
-                if (ret != -1 && ret != 0)
+                var image = ps4.ReadMemory(pid, buffer, ret * 0xA2800);
+                if(image == null)
                 {
-                    var image = ps4.ReadMemory(pid, buffer, ret * 0xA2800);
-                    if(image == null)
-                    {
-                        MessageBox.Show("image not found", "Error");
-                    }
-                    MemoryStream mStream = new MemoryStream();
-                    mStream.Write(image, 0, image.Length);
-                    Image img = Image.FromStream(mStream);
-                    GameImages.Add(img);
+                    MessageBox.Show("image not found", "Error");
                 }
+                MemoryStream mStream = new MemoryStream();
+                mStream.Write(image, 0, image.Length);
+                Image img = Image.FromStream(mStream);
+                return img;
             }
             ps4.FreeMemory(pid, mem, 0x8000);
-            return GameImages;
+            return Image.FromStream(new MemoryStream());
         }
         private void gamesButton_Click(object sender, EventArgs e)
         {
@@ -343,9 +341,7 @@ namespace PS4Saves
                 return;
             }
             var dirs = GetSaveDirectories();
-            var images = GetGameImages(dirs);
             gamesComboBox.DataSource = dirs;
-            gameImageBox.Image = images[0];
             SetStatus("Refreshed Games");
         }
 
@@ -790,6 +786,9 @@ namespace PS4Saves
             if (gamesComboBox.SelectedItem != null)
             {
                 selectedGame = (string)gamesComboBox.SelectedItem;
+                var image = GetGameImage(selectedGame);
+                gameImageBox.Image = image;
+                gameImageBox.SizeMode = PictureBoxSizeMode.StretchImage;
             }
             else
             {
@@ -884,6 +883,7 @@ namespace PS4Saves
 
             gamesButton.Enabled = true;
             gamesComboBox.Enabled = true;
+            gameImageBox.Enabled = true;
 
             searchButton.Enabled = true;
             dirsComboBox.Enabled = true;
@@ -925,7 +925,9 @@ namespace PS4Saves
 
             // Free custom function shellcode
             ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
+            ps4.FreeMemory(pid, GetGameImagesAddr, 0x8000);
             GetSaveDirectoriesAddr = 0;
+            GetGameImagesAddr = 0;
 
             isPatched = false;
             
@@ -941,6 +943,7 @@ namespace PS4Saves
 
             gamesButton.Enabled = false;
             gamesComboBox.Enabled = false;
+            gameImageBox.Enabled = false;
 
             searchButton.Enabled = false;
             dirsComboBox.Enabled = false;
