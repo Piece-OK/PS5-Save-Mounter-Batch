@@ -914,8 +914,11 @@ namespace PS4Saves
                 foreach (var patch in patchesToApply)
                 {
                     ulong targetAddress = ex.start + patch.Offset;
-
-                    ps4.WriteMemory(shellcore.pid, targetAddress, patch.OriginalBytes);
+                    // edge case for when originalBytes aren't set properly (usually while debugging or if the app crashes)
+                    if (patch.OriginalBytes != null)
+                    {
+                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.OriginalBytes);
+                    }
                     patch.OriginalBytes = [];
                 }
             }
@@ -937,6 +940,7 @@ namespace PS4Saves
             gamesComboBox.DataSource = null;
             //userComboBox.SelectedItem = null;
             userComboBox.DataSource = null;
+            gameImageBox.Image = null;
 
             setupButton.Enabled = false;
             userComboBox.Enabled = false;
