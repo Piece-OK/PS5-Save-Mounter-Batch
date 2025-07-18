@@ -1,4 +1,4 @@
-﻿using libdebug;
+using libdebug;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,7 +146,7 @@ namespace PS4Saves
             {
                 Offsets.SelectedFirmwareShellcore = relatedFwVersion;
             }
-            
+
             if (offsetsWarning)
             {
                 label2.Text += " " + detectedFirmware + ". Using FW " + relatedFwVersion + " offsets that might not work";
@@ -311,7 +311,8 @@ namespace PS4Saves
         }
         private Image GetGameImage(string game)
         {
-            var mem = ps4.AllocateMemory(pid, 0xA2800); // enough memory for the image
+            var mem_size = 0x100000; // 1MB should be enough memory for the image
+            var mem = ps4.AllocateMemory(pid, mem_size);
             var path = mem;
             var buffer = mem + 0x201;
 
@@ -319,18 +320,18 @@ namespace PS4Saves
             var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
             if (ret != -1 && ret != 0)
             {
-                var image = ps4.ReadMemory(pid, buffer, ret * 0xA2800);
-                if(image == null)
+                var image = ps4.ReadMemory(pid, buffer, ret * mem_size);
+                if (image == null || image.All(singleByte => singleByte == 0))
                 {
-                    MessageBox.Show("image not found", "Error");
+                    ps4.FreeMemory(pid, mem, mem_size);
+                    return null;
                 }
                 MemoryStream mStream = new MemoryStream();
                 mStream.Write(image, 0, image.Length);
-                Image img = Image.FromStream(mStream);
-                return img;
+                return Image.FromStream(mStream);
             }
-            ps4.FreeMemory(pid, mem, 0x8000);
-            return Image.FromStream(new MemoryStream());
+            ps4.FreeMemory(pid, mem, mem_size);
+            return null;
         }
         private void gamesButton_Click(object sender, EventArgs e)
         {
@@ -892,7 +893,7 @@ namespace PS4Saves
 
             nameTextBox.Enabled = true;
             createButton.Enabled = true;
-            
+
         }
 
         private void unpatch()
@@ -932,7 +933,7 @@ namespace PS4Saves
             GetGameImagesAddr = 0;
 
             isPatched = false;
-            
+
             //dirsComboBox.SelectedItem = null;
             dirsComboBox.DataSource = null;
             //gamesComboBox.SelectedItem = null;
