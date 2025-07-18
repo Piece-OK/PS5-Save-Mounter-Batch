@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -23,9 +24,11 @@ namespace PS4Saves
         private ulong executableBase = 0x0;
         private ulong libSceLibcInternalBase = 0x0;
         private ulong GetSaveDirectoriesAddr = 0;
+        private ulong GetGameImagesAddr = 0;
         private bool isPatched = false;
         private int user = 0x0;
         private string selectedGame = null;
+        List<Image> GameImages = [];
         string mp = "";
         bool log = true;
 
@@ -306,6 +309,29 @@ namespace PS4Saves
             ps4.FreeMemory(pid, mem, 0x8000);
             return [.. dirs.Order()];
         }
+        private Image GetGameImage(string game)
+        {
+            var mem = ps4.AllocateMemory(pid, 0xA2800); // enough memory for the image
+            var path = mem;
+            var buffer = mem + 0x201;
+
+            ps4.WriteMemory(pid, path, $"/user/appmeta/{game}/icon0.png");
+            var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
+            if (ret != -1 && ret != 0)
+            {
+                var image = ps4.ReadMemory(pid, buffer, ret * 0xA2800);
+                if(image == null)
+                {
+                    MessageBox.Show("image not found", "Error");
+                }
+                MemoryStream mStream = new MemoryStream();
+                mStream.Write(image, 0, image.Length);
+                Image img = Image.FromStream(mStream);
+                return img;
+            }
+            ps4.FreeMemory(pid, mem, 0x8000);
+            return Image.FromStream(new MemoryStream());
+        }
         private void gamesButton_Click(object sender, EventArgs e)
         {
             if (!ps4.IsConnected)
@@ -413,10 +439,13 @@ namespace PS4Saves
         {
             // Allocate memory for custom functions
             GetSaveDirectoriesAddr = ps4.AllocateMemory(pid, 0x8000);
+            GetGameImagesAddr = ps4.AllocateMemory(pid, 0x8000);
 
             ps4.WriteMemory(pid, GetSaveDirectoriesAddr, functions.GetSaveDirectories);
+            ps4.WriteMemory(pid, GetGameImagesAddr, functions.GetGameImages);
 
             List<Patch> patchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmwareShellcore);
+            List<Patch> imagePatchesToApply = Patches.GetLibcPatches(Offsets.SelectedFirmwareShellcore, true);
 
             if (patchesToApply.Count > 0) // Check if there are any patches to apply
             {
@@ -424,6 +453,14 @@ namespace PS4Saves
                 foreach (var patch in patchesToApply)
                 {
                     ulong targetAddress = GetSaveDirectoriesAddr + patch.Offset;
+                    ps4.WriteMemory(pid, targetAddress, libSceLibcInternalBase + patch.FunctionOffset);
+                }
+            }
+            if (imagePatchesToApply.Count > 0)
+            {
+                foreach (var patch in imagePatchesToApply)
+                {
+                    ulong targetAddress = GetGameImagesAddr + patch.Offset;
                     ps4.WriteMemory(pid, targetAddress, libSceLibcInternalBase + patch.FunctionOffset);
                 }
             }
@@ -748,6 +785,9 @@ namespace PS4Saves
             if (gamesComboBox.SelectedItem != null)
             {
                 selectedGame = (string)gamesComboBox.SelectedItem;
+                var image = GetGameImage(selectedGame);
+                gameImageBox.Image = image;
+                gameImageBox.SizeMode = PictureBoxSizeMode.StretchImage;
             }
             else
             {
@@ -842,6 +882,7 @@ namespace PS4Saves
 
             gamesButton.Enabled = true;
             gamesComboBox.Enabled = true;
+            gameImageBox.Enabled = true;
 
             searchButton.Enabled = true;
             dirsComboBox.Enabled = true;
@@ -872,8 +913,11 @@ namespace PS4Saves
                 foreach (var patch in patchesToApply)
                 {
                     ulong targetAddress = ex.start + patch.Offset;
-
-                    ps4.WriteMemory(shellcore.pid, targetAddress, patch.OriginalBytes);
+                    // edge case for when originalBytes aren't set properly (usually while debugging or if the app crashes)
+                    if (patch.OriginalBytes != null)
+                    {
+                        ps4.WriteMemory(shellcore.pid, targetAddress, patch.OriginalBytes);
+                    }
                     patch.OriginalBytes = [];
                 }
             }
@@ -883,22 +927,26 @@ namespace PS4Saves
 
             // Free custom function shellcode
             ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
+            ps4.FreeMemory(pid, GetGameImagesAddr, 0x8000);
             GetSaveDirectoriesAddr = 0;
+            GetGameImagesAddr = 0;
 
             isPatched = false;
-
+            
             //dirsComboBox.SelectedItem = null;
             dirsComboBox.DataSource = null;
             //gamesComboBox.SelectedItem = null;
             gamesComboBox.DataSource = null;
             //userComboBox.SelectedItem = null;
             userComboBox.DataSource = null;
+            gameImageBox.Image = null;
 
             setupButton.Enabled = false;
             userComboBox.Enabled = false;
 
             gamesButton.Enabled = false;
             gamesComboBox.Enabled = false;
+            gameImageBox.Enabled = false;
 
             searchButton.Enabled = false;
             dirsComboBox.Enabled = false;

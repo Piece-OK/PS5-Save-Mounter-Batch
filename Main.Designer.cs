@@ -64,6 +64,7 @@ namespace PS4Saves
             subtitleLabel = new System.Windows.Forms.Label();
             titleTextBox = new System.Windows.Forms.TextBox();
             titleLabel = new System.Windows.Forms.Label();
+            gameImageBox = new System.Windows.Forms.PictureBox();
             sizeToolTip = new System.Windows.Forms.ToolTip(components);
             statusLabel = new System.Windows.Forms.Label();
             connectionGroupBox.SuspendLayout();
@@ -71,6 +72,7 @@ namespace PS4Saves
             ((System.ComponentModel.ISupportInitialize)sizeTrackBar).BeginInit();
             mountGroupBox.SuspendLayout();
             infoGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)gameImageBox).BeginInit();
             SuspendLayout();
             // 
             // ipTextBox
@@ -373,6 +375,7 @@ namespace PS4Saves
             infoGroupBox.Controls.Add(subtitleLabel);
             infoGroupBox.Controls.Add(titleTextBox);
             infoGroupBox.Controls.Add(titleLabel);
+            infoGroupBox.Controls.Add(gameImageBox);
             infoGroupBox.Location = new System.Drawing.Point(458, 13);
             infoGroupBox.Margin = new System.Windows.Forms.Padding(4);
             infoGroupBox.Name = "infoGroupBox";
@@ -384,7 +387,7 @@ namespace PS4Saves
             // 
             // dateTextBox
             // 
-            dateTextBox.Location = new System.Drawing.Point(10, 339);
+            dateTextBox.Location = new System.Drawing.Point(10, 253);
             dateTextBox.Margin = new System.Windows.Forms.Padding(4);
             dateTextBox.Name = "dateTextBox";
             dateTextBox.ReadOnly = true;
@@ -394,7 +397,7 @@ namespace PS4Saves
             // dateLabel
             // 
             dateLabel.AutoSize = true;
-            dateLabel.Location = new System.Drawing.Point(7, 321);
+            dateLabel.Location = new System.Drawing.Point(7, 235);
             dateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             dateLabel.Name = "dateLabel";
             dateLabel.Size = new System.Drawing.Size(34, 15);
@@ -403,18 +406,19 @@ namespace PS4Saves
             // 
             // detailsTextBox
             // 
-            detailsTextBox.Location = new System.Drawing.Point(10, 191);
+            detailsTextBox.BackColor = System.Drawing.SystemColors.Control;
+            detailsTextBox.Location = new System.Drawing.Point(10, 158);
             detailsTextBox.Margin = new System.Windows.Forms.Padding(4);
             detailsTextBox.Multiline = true;
             detailsTextBox.Name = "detailsTextBox";
             detailsTextBox.ReadOnly = true;
-            detailsTextBox.Size = new System.Drawing.Size(444, 126);
+            detailsTextBox.Size = new System.Drawing.Size(444, 74);
             detailsTextBox.TabIndex = 5;
             // 
             // detailsLabel
             // 
             detailsLabel.AutoSize = true;
-            detailsLabel.Location = new System.Drawing.Point(7, 173);
+            detailsLabel.Location = new System.Drawing.Point(7, 140);
             detailsLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             detailsLabel.Name = "detailsLabel";
             detailsLabel.Size = new System.Drawing.Size(45, 15);
@@ -423,18 +427,18 @@ namespace PS4Saves
             // 
             // subtitleTextBox
             // 
-            subtitleTextBox.Location = new System.Drawing.Point(10, 116);
+            subtitleTextBox.Location = new System.Drawing.Point(10, 93);
             subtitleTextBox.Margin = new System.Windows.Forms.Padding(4);
             subtitleTextBox.Multiline = true;
             subtitleTextBox.Name = "subtitleTextBox";
             subtitleTextBox.ReadOnly = true;
-            subtitleTextBox.Size = new System.Drawing.Size(444, 53);
+            subtitleTextBox.Size = new System.Drawing.Size(444, 43);
             subtitleTextBox.TabIndex = 3;
             // 
             // subtitleLabel
             // 
             subtitleLabel.AutoSize = true;
-            subtitleLabel.Location = new System.Drawing.Point(7, 98);
+            subtitleLabel.Location = new System.Drawing.Point(7, 75);
             subtitleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             subtitleLabel.Name = "subtitleLabel";
             subtitleLabel.Size = new System.Drawing.Size(50, 15);
@@ -443,12 +447,13 @@ namespace PS4Saves
             // 
             // titleTextBox
             // 
+            titleTextBox.BackColor = System.Drawing.SystemColors.Control;
             titleTextBox.Location = new System.Drawing.Point(10, 40);
             titleTextBox.Margin = new System.Windows.Forms.Padding(4);
             titleTextBox.Multiline = true;
             titleTextBox.Name = "titleTextBox";
             titleTextBox.ReadOnly = true;
-            titleTextBox.Size = new System.Drawing.Size(444, 54);
+            titleTextBox.Size = new System.Drawing.Size(444, 29);
             titleTextBox.TabIndex = 1;
             // 
             // titleLabel
@@ -460,6 +465,15 @@ namespace PS4Saves
             titleLabel.Size = new System.Drawing.Size(33, 15);
             titleLabel.TabIndex = 0;
             titleLabel.Text = "Title:";
+            // 
+            // gameImageBox
+            // 
+            gameImageBox.BackColor = System.Drawing.SystemColors.Control;
+            gameImageBox.Location = new System.Drawing.Point(144, 283);
+            gameImageBox.Name = "gameImageBox";
+            gameImageBox.Size = new System.Drawing.Size(175, 175);
+            gameImageBox.TabIndex = 8;
+            gameImageBox.TabStop = false;
             // 
             // statusLabel
             // 
@@ -475,6 +489,7 @@ namespace PS4Saves
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BackColor = System.Drawing.SystemColors.Control;
             ClientSize = new System.Drawing.Size(934, 503);
             Controls.Add(statusLabel);
             Controls.Add(infoGroupBox);
@@ -494,6 +509,7 @@ namespace PS4Saves
             mountGroupBox.PerformLayout();
             infoGroupBox.ResumeLayout(false);
             infoGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)gameImageBox).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -535,6 +551,7 @@ namespace PS4Saves
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox sizeSnapCheckbox;
+        private System.Windows.Forms.PictureBox gameImageBox;
     }
 }
 
