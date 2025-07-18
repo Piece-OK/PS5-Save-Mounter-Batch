@@ -59,9 +59,9 @@ public static class Patches
                 ],
                 // Libc patches for images
                 [
-                    new(0x16, 0x60D00), // fopen
-                    new(0x38, 0x60F90), // fread
-                    new(0x5B, 0x00470)  // fclose
+                    new(0x12, 0x60D00), // fopen
+                    new(0x20, 0x60F90), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },

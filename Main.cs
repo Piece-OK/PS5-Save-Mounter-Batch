@@ -28,7 +28,7 @@ namespace PS4Saves
         private bool isPatched = false;
         private int user = 0x0;
         private string selectedGame = null;
-        List<Image> GameImages;
+        List<Image> GameImages = [];
         string mp = "";
         bool log = true;
 
@@ -292,9 +292,9 @@ namespace PS4Saves
         }
         private List<Image> GetGameImages(IEnumerable<string> games)
         {
-            var mem = ps4.AllocateMemory(pid, 0x8000);
+            var mem = ps4.AllocateMemory(pid, 0xA2800); // enough memory for the image
             var path = mem;
-            var buffer = mem + 0x101;
+            var buffer = mem + 0x201;
 
             foreach (var game in games)
             {
@@ -302,12 +302,15 @@ namespace PS4Saves
                 var ret = (int)ps4.Call(pid, stub, GetGameImagesAddr, path, buffer);
                 if (ret != -1 && ret != 0)
                 {
-                    var image = ps4.ReadMemory(pid, buffer, ret * 0x1F4000);
-                    MemoryStream stream = new(image)
+                    var image = ps4.ReadMemory(pid, buffer, ret * 0xA2800);
+                    if(image == null)
                     {
-                        Position = 0
-                    };
-                    GameImages.Add(Image.FromStream(stream));
+                        MessageBox.Show("image not found", "Error");
+                    }
+                    MemoryStream mStream = new MemoryStream();
+                    mStream.Write(image, 0, image.Length);
+                    Image img = Image.FromStream(mStream);
+                    GameImages.Add(img);
                 }
             }
             ps4.FreeMemory(pid, mem, 0x8000);
@@ -422,7 +425,7 @@ namespace PS4Saves
         {
             // Allocate memory for custom functions
             GetSaveDirectoriesAddr = ps4.AllocateMemory(pid, 0x8000);
-            GetGameImagesAddr = ps4.AllocateMemory(pid, 0x1F4000);
+            GetGameImagesAddr = ps4.AllocateMemory(pid, 0x8000);
 
             ps4.WriteMemory(pid, GetSaveDirectoriesAddr, functions.GetSaveDirectories);
             ps4.WriteMemory(pid, GetGameImagesAddr, functions.GetGameImages);
@@ -906,7 +909,7 @@ namespace PS4Saves
             GetSaveDirectoriesAddr = 0;
 
             isPatched = false;
-
+            
             //dirsComboBox.SelectedItem = null;
             dirsComboBox.DataSource = null;
             //gamesComboBox.SelectedItem = null;
