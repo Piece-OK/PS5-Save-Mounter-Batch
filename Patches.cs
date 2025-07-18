@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace PS4Saves;
@@ -89,6 +89,12 @@ public static class Patches
                     new(0x20, 0x7A120), // readdir
                     new(0x2E, 0x79E30), // closedir
                     new(0x3C, 0x7BEC0)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x60C90), // fopen
+                    new(0x20, 0x60F20), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -116,6 +122,12 @@ public static class Patches
                     new(0x20, 0x76E80), // readdir
                     new(0x2E, 0x76B90), // closedir
                     new(0x3C, 0x78C90)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5D690), // fopen
+                    new(0x20, 0x5D910), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -143,6 +155,12 @@ public static class Patches
                     new(0x20, 0x76E80), // readdir
                     new(0x2E, 0x76B90), // closedir
                     new(0x3C, 0x78C90)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5D690), // fopen
+                    new(0x20, 0x5D910), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -170,6 +188,12 @@ public static class Patches
                     new(0x20, 0x713E0), // readdir
                     new(0x2E, 0x710F0), // closedir
                     new(0x3C, 0x731D0)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5BB10), // fopen
+                    new(0x20, 0x5BD90), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -224,6 +248,12 @@ public static class Patches
                     new(0x20, 0x72AA0), // readdir
                     new(0x2E, 0x727D0), // closedir
                     new(0x3C, 0x74830)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5D1A0), // fopen
+                    new(0x20, 0x5D420), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -251,6 +281,12 @@ public static class Patches
                     new(0x20, 0x75F50), // readdir
                     new(0x2E, 0x75C80), // closedir
                     new(0x3C, 0x77D20)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5CAE0), // fopen
+                    new(0x20, 0x5CD60), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -332,6 +368,12 @@ public static class Patches
                     new(0x20, 0x73FB0), // readdir
                     new(0x2E, 0x73CE0), // closedir
                     new(0x3C, 0x75D80)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5C600), // fopen
+                    new(0x20, 0x5C880), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -359,6 +401,12 @@ public static class Patches
                     new(0x20, 0x73960), // readdir
                     new(0x2E, 0x73690), // closedir
                     new(0x3C, 0x757F0)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5C520), // fopen
+                    new(0x20, 0x5C790), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
@@ -388,8 +436,10 @@ public static class Patches
         if (imagePatches)
         {
             // TODO: refactor this
-            if (FirmwarePatches.TryGetValue(firmwareVersion, out var imgPatches)) {
-                return imgPatches[2];
+            if (FirmwarePatches.TryGetValue(firmwareVersion, out var imgPatches))
+            {
+                if (imgPatches.Length > 2)
+                    return imgPatches[2];
             }
             return [];
         }
