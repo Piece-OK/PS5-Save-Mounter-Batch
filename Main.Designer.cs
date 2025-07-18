@@ -144,6 +144,7 @@ namespace PS4Saves
             // 
             // dirsComboBox
             // 
+            dirsComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dirsComboBox.Enabled = false;
             dirsComboBox.FormattingEnabled = true;
             dirsComboBox.Location = new System.Drawing.Point(225, 22);
@@ -155,6 +156,7 @@ namespace PS4Saves
             // 
             // searchButton
             // 
+            searchButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             searchButton.Enabled = false;
             searchButton.Location = new System.Drawing.Point(7, 22);
             searchButton.Margin = new System.Windows.Forms.Padding(4);
@@ -167,6 +169,7 @@ namespace PS4Saves
             // 
             // mountButton
             // 
+            mountButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             mountButton.Enabled = false;
             mountButton.Location = new System.Drawing.Point(7, 55);
             mountButton.Margin = new System.Windows.Forms.Padding(4);
@@ -179,6 +182,7 @@ namespace PS4Saves
             // 
             // unmountButton
             // 
+            unmountButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             unmountButton.Enabled = false;
             unmountButton.Location = new System.Drawing.Point(224, 55);
             unmountButton.Margin = new System.Windows.Forms.Padding(4);
@@ -367,6 +371,8 @@ namespace PS4Saves
             // 
             // infoGroupBox
             // 
+            infoGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            infoGroupBox.AutoSize = true;
             infoGroupBox.Controls.Add(dateTextBox);
             infoGroupBox.Controls.Add(dateLabel);
             infoGroupBox.Controls.Add(detailsTextBox);
@@ -380,13 +386,14 @@ namespace PS4Saves
             infoGroupBox.Margin = new System.Windows.Forms.Padding(4);
             infoGroupBox.Name = "infoGroupBox";
             infoGroupBox.Padding = new System.Windows.Forms.Padding(4);
-            infoGroupBox.Size = new System.Drawing.Size(462, 464);
+            infoGroupBox.Size = new System.Drawing.Size(462, 489);
             infoGroupBox.TabIndex = 12;
             infoGroupBox.TabStop = false;
             infoGroupBox.Text = "Save Info";
             // 
             // dateTextBox
             // 
+            dateTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dateTextBox.Location = new System.Drawing.Point(10, 253);
             dateTextBox.Margin = new System.Windows.Forms.Padding(4);
             dateTextBox.Name = "dateTextBox";
@@ -406,6 +413,7 @@ namespace PS4Saves
             // 
             // detailsTextBox
             // 
+            detailsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             detailsTextBox.BackColor = System.Drawing.SystemColors.Control;
             detailsTextBox.Location = new System.Drawing.Point(10, 158);
             detailsTextBox.Margin = new System.Windows.Forms.Padding(4);
@@ -427,6 +435,7 @@ namespace PS4Saves
             // 
             // subtitleTextBox
             // 
+            subtitleTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             subtitleTextBox.Location = new System.Drawing.Point(10, 93);
             subtitleTextBox.Margin = new System.Windows.Forms.Padding(4);
             subtitleTextBox.Multiline = true;
@@ -447,6 +456,7 @@ namespace PS4Saves
             // 
             // titleTextBox
             // 
+            titleTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             titleTextBox.BackColor = System.Drawing.SystemColors.Control;
             titleTextBox.Location = new System.Drawing.Point(10, 40);
             titleTextBox.Margin = new System.Windows.Forms.Padding(4);
@@ -468,18 +478,22 @@ namespace PS4Saves
             // 
             // gameImageBox
             // 
+            gameImageBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             gameImageBox.BackColor = System.Drawing.SystemColors.Control;
             gameImageBox.Location = new System.Drawing.Point(144, 283);
+            gameImageBox.MaximumSize = new System.Drawing.Size(512, 512);
+            gameImageBox.MinimumSize = new System.Drawing.Size(175, 175);
             gameImageBox.Name = "gameImageBox";
-            gameImageBox.Size = new System.Drawing.Size(175, 175);
+            gameImageBox.Size = new System.Drawing.Size(175, 183);
             gameImageBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             gameImageBox.TabIndex = 8;
             gameImageBox.TabStop = false;
             // 
             // statusLabel
             // 
+            statusLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             statusLabel.AutoSize = true;
-            statusLabel.Location = new System.Drawing.Point(9, 481);
+            statusLabel.Location = new System.Drawing.Point(9, 489);
             statusLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new System.Drawing.Size(42, 15);
@@ -491,13 +505,14 @@ namespace PS4Saves
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.SystemColors.Control;
-            ClientSize = new System.Drawing.Size(934, 503);
+            ClientSize = new System.Drawing.Size(934, 511);
             Controls.Add(statusLabel);
             Controls.Add(infoGroupBox);
             Controls.Add(mountGroupBox);
             Controls.Add(createGroupBox);
             Controls.Add(connectionGroupBox);
             Margin = new System.Windows.Forms.Padding(4);
+            MinimumSize = new System.Drawing.Size(950, 550);
             Name = "Main";
             Text = "Playstation 5 Save Mounter 1.4.5 [ps5debug]";
             Closing += Main_Closing;
