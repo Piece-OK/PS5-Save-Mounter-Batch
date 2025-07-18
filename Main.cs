@@ -1,4 +1,4 @@
-﻿using libdebug;
+using libdebug;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -927,7 +927,7 @@ namespace PS4Saves
 
             // Free custom function shellcode
             ps4.FreeMemory(pid, GetSaveDirectoriesAddr, 0x8000);
-            ps4.FreeMemory(pid, GetGameImagesAddr, 0x8000);
+            ps4.FreeMemory(pid, GetGameImagesAddr, 0x100000);
             GetSaveDirectoriesAddr = 0;
             GetGameImagesAddr = 0;
 
