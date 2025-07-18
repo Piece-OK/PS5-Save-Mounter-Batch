@@ -1,4 +1,4 @@
-using libdebug;
+﻿using libdebug;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -788,7 +788,6 @@ namespace PS4Saves
                 selectedGame = (string)gamesComboBox.SelectedItem;
                 var image = GetGameImage(selectedGame);
                 gameImageBox.Image = image;
-                gameImageBox.SizeMode = PictureBoxSizeMode.StretchImage;
             }
             else
             {

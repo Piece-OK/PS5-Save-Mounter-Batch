@@ -472,6 +472,7 @@ namespace PS4Saves
             gameImageBox.Location = new System.Drawing.Point(144, 283);
             gameImageBox.Name = "gameImageBox";
             gameImageBox.Size = new System.Drawing.Size(175, 175);
+            gameImageBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             gameImageBox.TabIndex = 8;
             gameImageBox.TabStop = false;
             // 
@@ -554,4 +555,3 @@ namespace PS4Saves
         private System.Windows.Forms.PictureBox gameImageBox;
     }
 }
-
