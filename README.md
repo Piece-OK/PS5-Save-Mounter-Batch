@@ -1,4 +1,4 @@
-# Playstation 5 Save Mounter 1.4.5
+# Playstation 5 Save Mounter 1.4.6
 This version is using patching so save data can be mounted without launching the game.
 It solves the issue of failing to mount specific game saves, as they were already mounted on game boot.
 Read the original readme below.
