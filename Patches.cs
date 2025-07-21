@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace PS4Saves;
@@ -221,6 +221,12 @@ public static class Patches
                     new(0x20, 0x72AA0), // readdir
                     new(0x2E, 0x727D0), // closedir
                     new(0x3C, 0x74830)  // strcpy
+                ],
+                // Libc patches for images
+                [
+                    new(0x12, 0x5D1A0), // fopen
+                    new(0x20, 0x5D420), // fread
+                    new(0x2E, 0x00470), // fclose
                 ]
             }
         },
