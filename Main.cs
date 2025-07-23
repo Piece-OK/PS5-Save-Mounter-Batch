@@ -28,7 +28,7 @@ namespace PS4Saves
         private bool isPatched = false;
         private int user = 0x0;
         private string selectedGame = null;
-        List<Image> GameImages = [];
+        Dictionary<string, Image> GameImages = [];
         string mp = "";
         bool log = true;
 
@@ -311,6 +311,10 @@ namespace PS4Saves
         }
         private Image GetGameImage(string game)
         {
+            if (GameImages.ContainsKey(game))
+            {
+                return GameImages[game];
+            }
             var mem_size = 0x100000; // 1MB should be enough memory for the image
             var mem = ps4.AllocateMemory(pid, mem_size);
             var path = mem;
@@ -328,7 +332,9 @@ namespace PS4Saves
                 }
                 MemoryStream mStream = new MemoryStream();
                 mStream.Write(image, 0, image.Length);
-                return Image.FromStream(mStream);
+                var finalImage = Image.FromStream(mStream);
+                GameImages.Add(game, finalImage);
+                return finalImage;
             }
             ps4.FreeMemory(pid, mem, mem_size);
             return null;
