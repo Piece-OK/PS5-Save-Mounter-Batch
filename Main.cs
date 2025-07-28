@@ -14,6 +14,13 @@ struct GameMetadata
 {
     public string Name;
     public Image Image;
+    public bool Installed;
+    public GameMetadata()
+    {
+        Name = null;
+        Image = null;
+        Installed = false;
+    }
 }
 
 namespace PS4Saves
@@ -229,7 +236,7 @@ namespace PS4Saves
                 {
                     matchExactFWVersion(version);
                 }
-                else if (version == 720) // same as 7.40, different shellcore patches
+                else if (version == 700 || version == 720) // same as 7.40, different shellcore patches
                 {
                     matchLooseFWVersion(version, "7.40", false, true);
                 }
@@ -380,6 +387,11 @@ namespace PS4Saves
             var metadata = new GameMetadata();
             metadata.Image = GetGameImage(game);
             metadata.Name = GetGameName(game);
+            // Either one is good enough to identify the game, hopefully, so no warning/error.
+            if (metadata.Image != null || metadata.Name != null)
+            {
+                metadata.Installed = true;
+            }
             GamesMetadata.Add(game, metadata);
             return metadata;
         }
@@ -819,6 +831,7 @@ namespace PS4Saves
                 titleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).title;
                 subtitleTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).subtitle;
                 detailsTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).detail;
+                detailsTextBox.ForeColor = SystemColors.ControlText;
                 dateTextBox.Text = ((SearchEntry)dirsComboBox.SelectedItem).time;
             }
             else
@@ -837,6 +850,7 @@ namespace PS4Saves
             titleTextBox.Text = "";
             subtitleTextBox.Text = "";
             detailsTextBox.Text = "";
+            detailsTextBox.ForeColor = SystemColors.ControlText;
             dateTextBox.Text = "";
         }
 
@@ -847,6 +861,11 @@ namespace PS4Saves
                 selectedGame = (string)gamesComboBox.SelectedItem;
                 clearSavedataInfo();
                 var metadata = GetGameMetadata(selectedGame);
+                if (!metadata.Installed)
+                {
+                    detailsTextBox.Text += "Details for " + (metadata.Name ?? selectedGame) + " were not found. Game might be uninstalled." + Environment.NewLine + "You can mount a save to get more information";
+                    detailsTextBox.ForeColor = System.Drawing.Color.Red;
+                }
                 gameImageBox.Image = metadata.Image;
                 titleTextBox.Text = metadata.Name;
             }
