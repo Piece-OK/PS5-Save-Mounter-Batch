@@ -239,6 +239,7 @@ namespace PS4Saves
                     case 700:
                     case 701:
                     case 720:
+                    case 760:
                         matchLooseFWVersion(version, "7.40", false, true);  // same as 7.40, different shellcore patches
                         break;
                     case 940:
