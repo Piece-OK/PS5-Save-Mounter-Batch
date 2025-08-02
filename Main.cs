@@ -236,7 +236,7 @@ namespace PS4Saves
                 {
                     matchExactFWVersion(version);
                 }
-                else if (version == 700 || version == 720) // same as 7.40, different shellcore patches
+                else if (version == 720) // same as 7.40, different shellcore patches
                 {
                     matchLooseFWVersion(version, "7.40", false, true);
                 }
@@ -331,7 +331,7 @@ namespace PS4Saves
             var ret = (int)ps4.Call(pid, stub, ReadFileAddr, path, buffer);
             if (ret != -1 && ret != 0)
             {
-                var image = ps4.ReadMemory(pid, buffer, ret * mem_size);
+                var image = ps4.ReadMemory(pid, buffer, mem_size);
                 if (image == null || image.All(singleByte => singleByte == 0))
                 {
                     ps4.FreeMemory(pid, mem, mem_size);
@@ -356,7 +356,7 @@ namespace PS4Saves
             var ret = (int)ps4.Call(pid, stub, ReadFileAddr, path, buffer);
             if (ret != -1 && ret != 0)
             {
-                var xmlBytes = ps4.ReadMemory(pid, buffer, ret * mem_size);
+                var xmlBytes = ps4.ReadMemory(pid, buffer, mem_size);
                 if (xmlBytes == null || xmlBytes.All(singleByte => singleByte == 0))
                 {
                     ps4.FreeMemory(pid, mem, mem_size);
@@ -863,7 +863,7 @@ namespace PS4Saves
                 var metadata = GetGameMetadata(selectedGame);
                 if (!metadata.Installed)
                 {
-                    detailsTextBox.Text += "Details for " + (metadata.Name ?? selectedGame) + " were not found. Game might be uninstalled." + Environment.NewLine + "You can mount a save to get more information";
+                    detailsTextBox.Text += "Details for " + (metadata.Name ?? selectedGame) + " were not found. Game might be uninstalled." + Environment.NewLine + "You can mount a save to get more information.";
                     detailsTextBox.ForeColor = System.Drawing.Color.Red;
                 }
                 gameImageBox.Image = metadata.Image;
