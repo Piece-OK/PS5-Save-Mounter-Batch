@@ -232,58 +232,58 @@ namespace PS4Saves
                 }
 
                 int version = ps4.GetExtFWVersion();
-                if (version == 320 || version == 403 || version == 502 || version == 602 || version == 740 || version == 820 || version == 960 || version == 1001)
+                switch(version)
                 {
-                    matchExactFWVersion(version);
-                }
-                else if (version == 720) // same as 7.40, different shellcore patches
-                {
-                    matchLooseFWVersion(version, "7.40", false, true);
-                }
-                else if (version == 550) // same as 5.02, different shellcore patches
-                {
-                    matchLooseFWVersion(version, "5.02", false, true);
-                }
-                else if (version == 940) // same as 9.60
-                {
-                    matchLooseFWVersion(version, "9.60", false);
-                }
-                else if (version >= 300 && version < 400)
-                {
-                    matchLooseFWVersion(version, "3.20");
-                }
-                else if (version >= 400 && version < 500)
-                {
-                    matchLooseFWVersion(version, "4.03");
-                }
-                else if (version >= 500 && version < 600)
-                {
-                    matchLooseFWVersion(version, "5.02");
-                }
-                else if (version >= 600 && version < 700)
-                {
-                    matchLooseFWVersion(version, "6.02");
-                }
-                else if (version >= 700 && version < 800)
-                {
-                    matchLooseFWVersion(version, "7.40");
-                }
-                else if (version >= 800 && version < 900)
-                {
-                    matchLooseFWVersion(version, "8.20");
-                }
-                else if (version >= 900 && version < 1000)
-                {
-                    matchLooseFWVersion(version, "9.60");
-                }
-                else if (version >= 1000 && version < 1100)
-                {
-                    matchLooseFWVersion(version, "10.01");
-                }
-                else
-                {
-                    MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + "\nExiting.");
-                    System.Windows.Forms.Application.Exit();
+                    case 320:
+                    case 403:
+                    case 502:
+                    case 602:
+                    case 740:
+                    case 820:
+                    case 960:
+                    case 1001:
+                        matchExactFWVersion(version);
+                        break;
+                    case 550:
+                        matchLooseFWVersion(version, "5.02", false, true); // same as 5.02, different shellcore patches
+                        break;
+                    case 700:
+                    case 701:
+                    case 720:
+                    case 760:
+                        matchLooseFWVersion(version, "7.40", false, true);  // same as 7.40, different shellcore patches
+                        break;
+                    case 940:
+                        matchLooseFWVersion(version, "9.60", false);  // same as 9.60
+                        break;
+                    case >= 300 and < 400:
+                        matchLooseFWVersion(version, "3.20");
+                        break;
+                    case >= 400 and < 500:
+                        matchLooseFWVersion(version, "4.03");
+                        break;
+                    case >= 500 and < 600:
+                        matchLooseFWVersion(version, "5.02");
+                        break;
+                    case >= 600 and < 700:
+                        matchLooseFWVersion(version, "6.02");
+                        break;
+                    case >= 700 and < 800:
+                        matchLooseFWVersion(version, "7.40");
+                        break;
+                    case >= 800 and < 900:
+                        matchLooseFWVersion(version, "8.20");
+                        break;
+                    case >= 900 and < 1000:
+                        matchLooseFWVersion(version, "9.60");
+                        break;
+                    case >= 1000 and < 1100:
+                        matchLooseFWVersion(version, "10.01");
+                        break;
+                    default:
+                        MessageBox.Show("Error! Unsupported firmware version detected: " + ((double)version / 100).ToString("F2", System.Globalization.CultureInfo.InvariantCulture) + "\nExiting.");
+                        System.Windows.Forms.Application.Exit();
+                        break;
                 }
 
                 connectButton.Text = "Disconnect";
