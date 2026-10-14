@@ -68,7 +68,7 @@ jobs:
         cp mounter_payload/savemounter.elf ./publish/win-x64/
         cp LICENSE README.dumper.md ./publish/win-x64/
         mv ./publish/win-x64/README.dumper.md ./publish/win-x64/README.md
-        cp README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
+        cp ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         git archive --format=zip HEAD -o ./publish/win-x64/corresponding-source.zip
         cd ./publish/win-x64
