@@ -1,9 +1,9 @@
-name: Build and Publish
+name: Build and Publish Save Mounter Batch
 
 on:
   push:
     branches:
-      - '*'
+      - '**'
     tags:
       - '*'
     paths:
@@ -16,8 +16,19 @@ permissions:
   contents: write
 
 jobs:
+  windows_tests:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+    - name: Verify client and batch behavior
+      run: dotnet run --project tests/Dumper.Tests.csproj -c Release
+
   build_and_release:
-    runs-on: 'ubuntu-latest'
+    needs: windows_tests
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v4
@@ -25,13 +36,13 @@ jobs:
     - name: Install toolchain dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang lld bsdextrautils
+        sudo apt-get install -y clang-18 llvm-18-dev lld-18 bsdextrautils
 
     - name: Checkout PS5 payload SDK
       uses: actions/checkout@v4
       with:
         repository: ps5-payload-dev/sdk
-        ref: 4eb701204fc3f8d31e84cf8ca272974e2be9c867
+        ref: f5d40f02770e9b0001dd9e18056eca70b3da8b40
         submodules: recursive
         path: ps5-payload-sdk
 
@@ -47,14 +58,19 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 10.0.x
 
     - name: Publish
       run: |
         dotnet publish PS4Saves.csproj --configuration Release \
-          -r win-x64 --self-contained false \
+          -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
-        cp mounter_payload/mounter.elf ./publish/win-x64/
+        cp mounter_payload/savemounter.elf ./publish/win-x64/
+        cp LICENSE README.dumper.md ./publish/win-x64/
+        mv ./publish/win-x64/README.dumper.md ./publish/win-x64/README.md
+        cp README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
+        cp -r Licenses ./publish/win-x64/
+        git archive --format=zip HEAD -o ./publish/win-x64/corresponding-source.zip
         cd ./publish/win-x64
         zip -r save-mounter.zip ./*
 

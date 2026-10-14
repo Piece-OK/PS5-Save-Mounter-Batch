@@ -9,7 +9,8 @@ public static class ElfldrClient
     public static void SendElf(string host, int port, byte[] elfData)
     {
         using var tcp = new TcpClient();
-        tcp.Connect(host, port);
+        tcp.ConnectAsync(host, port).WaitAsync(System.TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+        tcp.SendTimeout = 30000;
         using var stream = tcp.GetStream();
         stream.Write(elfData, 0, elfData.Length);
         tcp.Client.Shutdown(SocketShutdown.Send);

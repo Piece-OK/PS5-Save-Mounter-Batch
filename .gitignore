@@ -328,3 +328,13 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+*.o
+mounter_payload/mounter.elf
+mounter_payload/savemounter.elf
+
+# Portable application state and local publication outputs
+/Backups/
+/Cache/
+/Logs/
+/settings.json
+/publish/

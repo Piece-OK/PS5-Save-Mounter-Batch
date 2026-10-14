@@ -18,6 +18,21 @@ public class MounterClient : IDisposable
     private int _saveDbUserId;
 
     public bool IsConnected => _tcp?.Connected == true;
+    public int EmbeddedFtpPort { get; private set; }
+    public string PayloadVersion { get; private set; } = "unknown";
+
+    public void NegotiateBatchProtocol()
+    {
+        SendCommand("GET_CAPS");
+        string caps = ExpectOk();
+        if (!caps.StartsWith("BATCH/2 ")) throw new IOException("This app needs the bundled savemounter.elf. Disconnect the original mounter and send the new savemounter.elf.");
+        foreach (string field in caps.Split(' '))
+        {
+            if (field.StartsWith("FTP=")) EmbeddedFtpPort = int.Parse(field[4..]);
+            if (field.StartsWith("VERSION=")) PayloadVersion = field[8..];
+        }
+        if (EmbeddedFtpPort < 1 || EmbeddedFtpPort > 65535) throw new IOException("Payload returned an invalid FTP port");
+    }
 
     public void Connect(string host, int port = DefaultPort, int retries = 10)
     {
@@ -26,9 +41,9 @@ public class MounterClient : IDisposable
             try
             {
                 _tcp = new TcpClient();
-                _tcp.Connect(host, port);
-                _tcp.ReceiveTimeout = 10000;
-                _tcp.SendTimeout = 10000;
+                _tcp.ConnectAsync(host, port).WaitAsync(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+                _tcp.ReceiveTimeout = 120000;
+                _tcp.SendTimeout = 30000;
                 _stream = _tcp.GetStream();
                 return;
             }
@@ -70,7 +85,8 @@ public class MounterClient : IDisposable
         while (true)
         {
             int b = _stream.ReadByte();
-            if (b < 0) return null;
+            if (b < 0) throw new IOException("Connection closed");
+            if (buf.Count > 65536) throw new IOException("Payload response line too long");
             if (b == '\n') break;
             if (b == '\r') continue;
             buf.Add((byte)b);
@@ -160,7 +176,7 @@ public class MounterClient : IDisposable
         // Enrich entries missing subtitle/detail from savedata.db (mainly PS4 saves, PS5 uses SFO)
         bool needsEnrich = false;
         foreach (var r in results)
-            if (string.IsNullOrEmpty(r.Subtitle) && string.IsNullOrEmpty(r.Detail))
+            if (string.IsNullOrWhiteSpace(r.Title) || (string.IsNullOrEmpty(r.Subtitle) && string.IsNullOrEmpty(r.Detail)))
             { needsEnrich = true; break; }
 
         if (needsEnrich)
@@ -237,6 +253,24 @@ public class MounterClient : IDisposable
         }
     }
 
+    public Dictionary<string, string> GetGameTitles()
+    {
+        var titles = new Dictionary<string, string>();
+        string tmp = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N") + ".db");
+        try
+        {
+            File.WriteAllBytes(tmp, ReadFile("/system_data/priv/mms/app.db", 128 * 1024 * 1024));
+            using var conn = new SqliteConnection($"Data Source={tmp};Mode=ReadOnly;Pooling=False");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT titleId, titleName FROM tbl_contentinfo WHERE titleName IS NOT NULL";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read()) titles[reader.GetString(0)] = reader.GetString(1);
+        }
+        finally { try { File.Delete(tmp); } catch { } }
+        return titles;
+    }
+
     public string Mount(int userId, string titleId, string dirName)
     {
         SendCommand($"MOUNT {userId:x} {titleId} {dirName}");
@@ -253,7 +287,7 @@ public class MounterClient : IDisposable
     {
         SendCommand($"READ_FILE {path}");
         int size = int.Parse(ExpectOk());
-        if (size > maxSize) throw new Exception($"File too large ({size} bytes, max {maxSize})");
+        if (size < 0 || size > maxSize) { Dispose(); throw new IOException($"File too large or invalid ({size} bytes, max {maxSize}); reconnect required"); }
         return ReadBytes(size);
     }
 

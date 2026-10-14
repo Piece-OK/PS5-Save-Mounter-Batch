@@ -16,8 +16,10 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <sys/syscall.h>
 #include <netinet/in.h>
 #include <ps5/kernel.h>
+#include "batch_ftp.h"
 
 #define MOUNTER_PORT 9090
 #define MAX_CMD_LEN  1024
@@ -30,6 +32,7 @@ static char g_original_path[512] = {0};
 static char g_local_copy[512] = {0};
 static char g_mount_point[256] = {0};
 static int g_mounted = 0;
+const char *batch_current_mount(void) { return g_mounted ? g_mount_point : ""; }
 
 // PFS save data structures (from savemounter.c)
 typedef struct { int blockSize; uint8_t flags[2]; } CreateOpt;
@@ -146,7 +149,7 @@ static void sendf(int fd, const char *fmt, ...) {
     va_start(ap, fmt);
     int len = vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    if (len > 0) send_all(fd, buf, len);
+    if (len > 0 && (size_t)len < sizeof(buf)) send_all(fd, buf, len);
 }
 
 static int recv_line(int fd, char *buf, int maxlen) {
@@ -159,6 +162,7 @@ static int recv_line(int fd, char *buf, int maxlen) {
         if (c == '\r') continue;
         buf[pos++] = c;
     }
+    if (pos >= maxlen - 1) return -1;
     buf[pos] = 0;
     return pos;
 }
@@ -176,19 +180,35 @@ static void cmd_get_fw(int c) {
 }
 
 static void cmd_get_users(int c) {
-    int ids[4];
+    int ids[64];
     memset(ids, -1, sizeof(ids));
     sceUserServiceGetLoginUserIdList(ids);
-
+    // LoginUserIdList only returns active sessions. Include local home profiles.
+    DIR *homes = opendir("/user/home");
+    struct dirent *entry;
+    if (homes) {
+        while ((entry = readdir(homes))) {
+            char *end; unsigned long value = strtoul(entry->d_name, &end, 16);
+            if (!entry->d_name[0] || *end || !value || value > 0x7fffffffUL) continue;
+            char path[512]; struct stat st;
+            snprintf(path, sizeof(path), "/user/home/%s", entry->d_name);
+            if (stat(path, &st) || !S_ISDIR(st.st_mode)) continue;
+            int found = 0, slot = -1;
+            for (int i=0;i<64;i++) { if(ids[i]==(int)value)found=1; if(ids[i]==-1 && slot==-1)slot=i; }
+            if (!found && slot>=0) ids[slot]=(int)value;
+        }
+        closedir(homes);
+    }
     int cnt = 0;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 64; i++)
         if (ids[i] != -1) cnt++;
 
     sendf(c, "OK %d\n", cnt);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 64; i++) {
         if (ids[i] == -1) continue;
         char name[17] = {0};
         sceUserServiceGetUserName(ids[i], name, sizeof(name));
+        if (!name[0]) snprintf(name,sizeof(name),"Local %x",ids[i]);
         sendf(c, "%x %s\n", ids[i], name);
     }
 }
@@ -805,6 +825,10 @@ static void cmd_create(int c, const char *uid_hex, const char *title_id,
 // ── Main ────────────────────────────────────────────────────
 
 int main() {
+    // Raw ELF uploads have no filename; elfldr initially calls them payload.elf.
+    // Set our process name explicitly, as elfldr/ftpsrv do for their own processes.
+    if (syscall(SYS_thr_set_name, (long)-1, "savemounter.elf") < 0)
+        printf("[mounter] setting process name failed: %s\n", strerror(errno));
     printf("[mounter] starting\n");
 
     // Privilege escalation
@@ -845,11 +869,16 @@ int main() {
         return -1;
     }
     listen(srv, 2);
+    if (batch_ftp_start() < 0) { close(srv); notify("Batch FTP could not start"); return -1; }
     printf("[mounter] listening on port %d\n", MOUNTER_PORT);
 
     while (1) {
-        int cl = accept(srv, NULL, NULL);
+        struct sockaddr_in peer; socklen_t peerlen=sizeof(peer);
+        int cl = accept(srv, (struct sockaddr*)&peer, &peerlen);
         if (cl < 0) continue;
+        pthread_mutex_lock(&batch_mount_mutex);
+        batch_ftp_authorize(peer.sin_addr.s_addr,1);
+        pthread_mutex_unlock(&batch_mount_mutex);
         printf("[mounter] client connected\n");
 
         char line[MAX_CMD_LEN];
@@ -861,9 +890,12 @@ int main() {
             char *t = strtok(line, " ");
             while (t && ac < 8) { a[ac++] = t; t = strtok(NULL, " "); }
             if (ac == 0) continue;
+            pthread_mutex_lock(&batch_mount_mutex);
 
             if      (strcmp(a[0], "PING") == 0)
                 sendf(cl, "OK\n");
+            else if (strcmp(a[0], "GET_CAPS") == 0)
+                sendf(cl, "OK BATCH/2 VERSION=0.1.0-dev.5 FTP=%d USERS=ALL BINARY=1\n", batch_ftp_port());
             else if (strcmp(a[0], "GET_FW") == 0)
                 cmd_get_fw(cl);
             else if (strcmp(a[0], "GET_USERS") == 0)
@@ -881,19 +913,25 @@ int main() {
             else if (strcmp(a[0], "CREATE") == 0 && ac >= 5)
                 cmd_create(cl, a[1], a[2], a[3], a[4]);
             else if (strcmp(a[0], "EXIT") == 0) {
+                batch_ftp_authorize(0,0);
                 auto_unmount();
                 sendf(cl, "OK\n");
                 close(cl);
                 close(srv);
                 printf("[mounter] exit\n");
+                pthread_mutex_unlock(&batch_mount_mutex);
                 return 0;
             }
             else
                 sendf(cl, "ERR unknown: %s\n", a[0]);
+            pthread_mutex_unlock(&batch_mount_mutex);
         }
 
         printf("[mounter] client disconnected\n");
+        pthread_mutex_lock(&batch_mount_mutex);
+        batch_ftp_authorize(0,0);
         auto_unmount();
+        pthread_mutex_unlock(&batch_mount_mutex);
         close(cl);
     }
 

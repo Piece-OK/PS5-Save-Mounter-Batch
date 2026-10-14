@@ -7,14 +7,14 @@ else
     $(error PS5_PAYLOAD_SDK is undefined)
 endif
 
-ELF := mounter.elf
+ELF := savemounter.elf
 
 CFLAGS := -Wall -Werror
 CFLAGS += -lSceUserService -lSceSystemService -lSceFsInternalForVsh
 
 all: $(ELF)
 
-$(ELF): main.c
+$(ELF): main.c batch_ftp.c
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
