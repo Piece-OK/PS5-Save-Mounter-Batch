@@ -72,7 +72,7 @@ dotnet run --project tests/Dumper.Tests.csproj -c Release
 ./build.ps1
 ```
 
-The script publishes to `publish/win-x64`. POSIX payload build: set PS5_PAYLOAD_SDK and run `make -C mounter_payload`. Retained Main.cs/Main.Designer.cs/Main.resx are upstream references excluded from the desktop build. DumperForm.cs implements the UI; DumpEngine.cs implements transfers and queue handling.
+The script publishes to `publish/win-x64`. POSIX payload build: set PS5_PAYLOAD_SDK and run `make -C mounter_payload`. DumperForm.cs implements the UI; DumpEngine.cs implements transfers and queue handling.
 
 ## License and provenance
 

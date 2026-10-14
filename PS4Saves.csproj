@@ -20,8 +20,6 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="tests\**\*.cs" />
-        <Compile Remove="Main.cs;Main.Designer.cs" />
-        <EmbeddedResource Remove="Main.resx" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     </ItemGroup>
 </Project>

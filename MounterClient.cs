@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -208,7 +207,7 @@ public class MounterClient : IDisposable
         try
         {
             File.WriteAllBytes(tmpPath, dbData);
-            using var conn = new SqliteConnection($"Data Source={tmpPath};Mode=ReadOnly");
+            using var conn = new SqliteConnection($"Data Source={tmpPath};Mode=ReadOnly;Pooling=False");
             conn.Open();
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT dir_name, main_title, sub_title, detail FROM savedata WHERE title_id = @tid";
@@ -237,19 +236,6 @@ public class MounterClient : IDisposable
         finally
         {
             try { File.Delete(tmpPath); } catch { }
-        }
-    }
-
-    public Image GetGameIcon(string titleId)
-    {
-        try
-        {
-            byte[] data = ReadFile($"/user/appmeta/{titleId}/icon0.png");
-            return Image.FromStream(new MemoryStream(data));
-        }
-        catch
-        {
-            return null;
         }
     }
 
@@ -291,20 +277,13 @@ public class MounterClient : IDisposable
         return ReadBytes(size);
     }
 
-    public string CreateSave(int userId, string titleId, string dirName, ulong blocks)
-    {
-        SendCommand($"CREATE {userId:x} {titleId} {dirName} {blocks}");
-        string result = ExpectOk();
-        _saveDbCache = null;
-        return result;
-    }
-
     public void Dispose()
     {
         _stream?.Dispose();
         _stream = null;
         _tcp?.Dispose();
         _tcp = null;
+        _saveDbCache = null;
     }
 }
 

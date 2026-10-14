@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -113,6 +114,7 @@ public sealed class SaveFtp(string host, int port, string user = "anonymous", st
         using var response = (FtpWebResponse)req.GetResponse();
         using var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
         var result = new List<RemoteEntry>();
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         string line;
         while ((line = reader.ReadLine()) != null)
         {
@@ -121,15 +123,19 @@ public sealed class SaveFtp(string host, int port, string user = "anonymous", st
             var e = ParseLine(line);
             if (e.Name is "." or "..") continue;
             LocalNames.Validate(e.Name);
-            if (result.Any(x => string.Equals(x.Name, e.Name, StringComparison.OrdinalIgnoreCase)))
+            if (!names.Add(e.Name))
                 throw new IOException("Names collide on Windows: " + e.Name);
             result.Add(e);
         }
         return result;
     }
     public void DownloadTree(string remote, string local, List<FileReceipt> files, Action<string> log, CancellationToken token)
-        => Walk(remote, local, "", files, log, token, 0);
-    private void Walk(string remote, string local, string relative, List<FileReceipt> files, Action<string> log, CancellationToken token, int depth)
+    {
+        byte[] buffer = ArrayPool<byte>.Shared.Rent(128 * 1024);
+        try { Walk(remote, local, "", files, log, token, 0, buffer); }
+        finally { ArrayPool<byte>.Shared.Return(buffer, clearArray: true); }
+    }
+    private void Walk(string remote, string local, string relative, List<FileReceipt> files, Action<string> log, CancellationToken token, int depth, byte[] buffer)
     {
         if (depth > 64) throw new IOException("Save folder nesting exceeds 64 levels");
         Directory.CreateDirectory(local);
@@ -139,7 +145,7 @@ public sealed class SaveFtp(string host, int port, string user = "anonymous", st
             string remoteChild = remote.TrimEnd('/') + "/" + e.Name;
             string localChild = Path.Combine(local, e.Name);
             string relativeChild = relative + e.Name;
-            if (e.IsDirectory) { Walk(remoteChild, localChild, relativeChild + "/", files, log, token, depth + 1); continue; }
+            if (e.IsDirectory) { Walk(remoteChild, localChild, relativeChild + "/", files, log, token, depth + 1, buffer); continue; }
             log($"Downloading {relativeChild} ({e.Size:N0} bytes)");
             string hash = "";
             for (int attempt = 1; ; attempt++)
@@ -152,7 +158,6 @@ public sealed class SaveFtp(string host, int port, string user = "anonymous", st
                     using var input = response.GetResponseStream();
                     using var output = new FileStream(localChild, FileMode.Create, FileAccess.Write, FileShare.None);
                     using var digest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
-                    byte[] buffer = new byte[128 * 1024];
                     long count = 0;
                     int n;
                     while ((n = input.Read(buffer, 0, buffer.Length)) != 0)

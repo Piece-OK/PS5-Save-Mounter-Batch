@@ -76,8 +76,7 @@ jobs:
           -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
         cp mounter_payload/savemounter.elf ./publish/win-x64/
-        cp LICENSE README.dumper.md ./publish/win-x64/
-        mv ./publish/win-x64/README.dumper.md ./publish/win-x64/README.md
+        cp LICENSE README.md ./publish/win-x64/
         cp ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS4Saves.csproj)

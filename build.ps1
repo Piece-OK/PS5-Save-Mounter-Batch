@@ -8,7 +8,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Publish failed' }
 if (Test-Path -LiteralPath $PayloadPath) { Copy-Item -LiteralPath $PayloadPath -Destination (Join-Path $OutputPath 'savemounter.elf') }
 else { throw 'Build savemounter.elf before publishing; the EXE and payload must be packaged together.' }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'LICENSE') -Destination $OutputPath
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.dumper.md') -Destination (Join-Path $OutputPath 'README.md')
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.md') -Destination (Join-Path $OutputPath 'README.md')
 foreach ($doc in @('ADVANCED.md', 'README.upstream.md', 'SOURCES.md', 'THIRD-PARTY-NOTICES.md', 'VALIDATION.md')) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $doc) -Destination $OutputPath
 }
