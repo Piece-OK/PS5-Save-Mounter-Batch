@@ -8,7 +8,7 @@ namespace PS4Saves;
 
 public static class BuildInfo
 {
-    public const string Version = "0.1.0-dev.5";
+    public const string Version = "0.1.0-dev.6";
     public const string PayloadFile = "savemounter.elf";
 }
 public static class UserLabel

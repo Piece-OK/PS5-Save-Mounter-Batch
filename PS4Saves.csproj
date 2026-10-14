@@ -6,12 +6,15 @@
         <Product>PS5 Save Mounter Batch</Product>
         <Title>PS5 Save Mounter Batch</Title>
         <Description>Batch save backups based on PlayStation 5 Save Mounter.</Description>
-        <Version>0.1.0-dev.5</Version>
-        <FileVersion>0.1.0.5</FileVersion>
+        <Version>0.1.0-dev.6</Version>
+        <FileVersion>0.1.0.6</FileVersion>
         <TargetFramework>net10.0-windows</TargetFramework>
         <RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <Deterministic>true</Deterministic>
+        <!-- Keep the full Windows Forms runtime, compressed inside portable builds. -->
+        <EnableCompressionInSingleFile Condition="'$(PublishSingleFile)' == 'true'">true</EnableCompressionInSingleFile>
+        <DebugType Condition="'$(Configuration)' == 'Release'">None</DebugType>
         <UseWindowsForms>true</UseWindowsForms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>

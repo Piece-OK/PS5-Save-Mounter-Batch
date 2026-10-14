@@ -25,6 +25,16 @@ jobs:
         dotnet-version: 10.0.x
     - name: Verify client and batch behavior
       run: dotnet run --project tests/Dumper.Tests.csproj -c Release
+    - name: Verify compressed portable executable
+      shell: pwsh
+      run: |
+        dotnet publish PS4Saves.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./smoke-package
+        if ($LASTEXITCODE -ne 0) { throw 'Portable build failed' }
+        $app = Join-Path $PWD 'smoke-package/PS5 Save Mounter Batch.exe'
+        $process = Start-Process -FilePath $app -ArgumentList '--smoke smoke-result.txt' -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru
+        if (-not $process.WaitForExit(30000)) { $process.Kill(); throw 'Portable smoke test timed out' }
+        if ($process.ExitCode -ne 0) { throw 'Portable smoke test failed' }
+        Get-Content (Join-Path $env:RUNNER_TEMP 'smoke-result.txt')
 
   build_and_release:
     needs: windows_tests
@@ -70,22 +80,24 @@ jobs:
         mv ./publish/win-x64/README.dumper.md ./publish/win-x64/README.md
         cp ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
-        git archive --format=zip HEAD -o ./publish/win-x64/corresponding-source.zip
+        VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS4Saves.csproj)
+        printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Save-Mounter-Batch/releases/tag/v%s\nDownload corresponding-source.zip from that release. It is not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
+        git archive --format=zip HEAD -o ./publish/corresponding-source.zip
         cd ./publish/win-x64
-        zip -r save-mounter.zip ./*
+        zip -r ../PS5-Save-Mounter-Batch-win-x64.zip ./*
 
     - name: Attest
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: ./publish/win-x64/save-mounter.zip
+        subject-path: ./publish/PS5-Save-Mounter-Batch-win-x64.zip
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: save-mounter
         path: |
-          ./publish/win-x64/*
-          !./publish/win-x64/save-mounter.zip
+          ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+          ./publish/corresponding-source.zip
 
     - name: Create or Update GitHub Release
       if: startsWith(github.ref, 'refs/tags/')
@@ -94,11 +106,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         TAG_NAME=${GITHUB_REF#refs/tags/}
-        RELEASE_EXISTS=$(gh release view $TAG_NAME > /dev/null 2>&1; echo $?)
-        if [ $RELEASE_EXISTS -eq 0 ]; then
+        if gh release view "$TAG_NAME" > /dev/null 2>&1; then
           echo "Release $TAG_NAME already exists. Uploading assets..."
-          gh release upload $TAG_NAME ./publish/win-x64/save-mounter.zip
+          gh release upload $TAG_NAME ./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/corresponding-source.zip
         else
           echo "Creating new release $TAG_NAME..."
-          gh release create $TAG_NAME --verify-tag -d ./publish/win-x64/save-mounter.zip
+          gh release create $TAG_NAME --verify-tag -d ./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/corresponding-source.zip --notes "Download the Windows ZIP to run the app. Matching source and build scripts are available separately in corresponding-source.zip on this release."
         fi

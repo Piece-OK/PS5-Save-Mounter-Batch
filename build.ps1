@@ -13,3 +13,10 @@ foreach ($doc in @('ADVANCED.md', 'README.upstream.md', 'SOURCES.md', 'THIRD-PAR
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot $doc) -Destination $OutputPath
 }
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'Licenses') -Destination $OutputPath -Recurse -Force
+$project = [xml](Get-Content -LiteralPath (Join-Path $PSScriptRoot 'PS4Saves.csproj') -Raw)
+$version = $project.Project.PropertyGroup.Version | Where-Object { $_ } | Select-Object -First 1
+@"
+Matching source code and build scripts for version ${version}:
+https://github.com/Piece-OK/PS5-Save-Mounter-Batch/releases/tag/v$version
+Download corresponding-source.zip from that release. It is not needed to run the app.
+"@ | Set-Content -LiteralPath (Join-Path $OutputPath 'SOURCE-CODE.txt') -Encoding utf8

@@ -12,7 +12,18 @@ public static class DumperCli
         string output = args.Length>1 ? args[1] : Path.Combine(AppContext.BaseDirectory,"diagnostic-result.json");
         try
         {
-            if(args[0]=="--smoke") { using var form=new DumperForm();form.CreateControl();File.WriteAllText(output,"GUI construction OK; runtime "+Environment.Version);return; }
+            if(args[0]=="--smoke")
+            {
+                using var form=new DumperForm();
+                form.CreateControl();
+                // Exercise the native SQLite library after single-file extraction too.
+                using var db=new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+                db.Open();
+                using var command=db.CreateCommand();
+                command.CommandText="SELECT sqlite_version()";
+                File.WriteAllText(output,"GUI construction OK; SQLite "+command.ExecuteScalar()+"; runtime "+Environment.Version);
+                return;
+            }
             if(args.Length<3)throw new ArgumentException("Usage: --inventory|--dump result.json host [userHex game save1,save2 destination]");
             DumperSettings s;
             try { s=JsonSerializer.Deserialize<DumperSettings>(File.ReadAllText(Path.Combine(AppContext.BaseDirectory,"settings.json"))) ?? new(); }
