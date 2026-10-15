@@ -8,7 +8,7 @@ namespace PS4Saves;
 
 public static class BuildInfo
 {
-    public const string Version = "0.1.0-dev.6";
+    public const string Version = "1.1-beta1";
     public const string PayloadFile = "savemounter.elf";
 }
 public static class UserLabel
@@ -54,6 +54,7 @@ public class DumpOptions
 public sealed class BatchTiming
 {
     public string Status { get; set; } = "Ready";
+    public bool IsSuccessful(int completed, int total) => Status == "Complete" && total > 0 && completed == total;
     public string LastEta { get; private set; } = "estimating…";
     public string Display(TimeSpan elapsed, int completed, int total, bool running)
     {

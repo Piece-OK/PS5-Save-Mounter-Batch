@@ -185,7 +185,7 @@ public static class LocalNames
     public static void Validate(string value)
     {
         if (string.IsNullOrWhiteSpace(value) || value is "." or ".." || value.EndsWith('.') || value.EndsWith(' ')
-            || value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || value.Any(char.IsControl)
+            || value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || value.IndexOfAny("<>:\"/\\|?*".ToCharArray()) >= 0 || value.Any(char.IsControl)
             || Regex.IsMatch(value, @"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\.|$)", RegexOptions.IgnoreCase))
             throw new IOException("Cannot safely preserve this name on Windows: " + value);
     }

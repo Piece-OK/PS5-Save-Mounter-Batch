@@ -338,3 +338,9 @@ mounter_payload/savemounter.elf
 /Logs/
 /settings.json
 /publish/
+
+# Linux packaging and test outputs
+*.AppImage
+*.AppImage.sha256
+/.build-tools/
+/linux/.avalonia-build-tasks/

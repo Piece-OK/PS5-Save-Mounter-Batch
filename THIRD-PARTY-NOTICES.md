@@ -14,4 +14,14 @@
 - Homebrew-title facts: fetched from https://homebrew.page/api/v1/index.json, published by blackbearreloaded/ps5-homebrew-catalog (repository license GPL-3.0). Only titleid/name fields are consumed by independently written code. No app binaries, catalog code or assets are incorporated. Source attribution appears in the GUI and log; see SOURCES.md.
 - PS4-title facts: exact CUSA names queried at runtime from the official shadPS4 compatibility website, https://shadps4.net/compatibility/. No emulator/site code, artwork or compatibility reports are incorporated. The website reserves its rights; a factual ID/name parser is independently implemented. Queries, caching and attribution are described in SOURCES.md and ADVANCED.md.
 
-Dependency versions are recorded in PS4Saves.csproj and the NuGet restore graph. The supplied development-build savemounter.elf is built from the modified payload source in Source/mounter_payload. GPLv3-or-later components are incorporated under GPLv3, compatible with the original project's GPLv3 license. See SOURCES.md for exact references, adaptations and build instructions.
+Dependency versions are recorded in PS4Saves.csproj, linux/PS5SaveMounter.Linux.csproj and the NuGet restore graph.
+
+## Linux package
+
+- Avalonia 12.1.4: MIT. Source: https://github.com/AvaloniaUI/Avalonia
+- Tmds.DBus.Protocol 0.94.1: MIT. Source: https://github.com/tmds/Tmds.DBus
+- SkiaSharp, HarfBuzzSharp and native dependencies: upstream license metadata and embedded notices are preserved per package under `usr/share/doc/ps5-save-mounter-batch/NuGet/` inside the AppImage. Its `packages.json` records the exact resolved versions without local build paths.
+- AppImage type-2 runtime: MIT with statically linked musl, libfuse, squashfuse, zstd and zlib components under their own terms. See `Licenses/AppImage-runtime-LICENSE.txt` for the upstream notice and component license links. Source: https://github.com/AppImage/type2-runtime
+- The self-contained Linux runtime in the locally verified AppImage is .NET 10.0.12; the SDK used for build/tests is 10.0.402. Runtime version is pinned in the Linux project and reported by `--smoke`; tests run on the SDK's installed runtime.
+
+The supplied development-build savemounter.elf is built from the modified payload source in Source/mounter_payload. GPLv3-or-later components are incorporated under GPLv3, compatible with the original project's GPLv3 license. See SOURCES.md for exact references, adaptations and build instructions.

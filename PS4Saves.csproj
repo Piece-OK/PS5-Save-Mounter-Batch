@@ -6,8 +6,8 @@
         <Product>PS5 Save Mounter Batch</Product>
         <Title>PS5 Save Mounter Batch</Title>
         <Description>Batch save backups based on PlayStation 5 Save Mounter.</Description>
-        <Version>0.1.0-dev.6</Version>
-        <FileVersion>0.1.0.6</FileVersion>
+        <Version>1.1-beta1</Version>
+        <FileVersion>1.1.0.0</FileVersion>
         <TargetFramework>net10.0-windows</TargetFramework>
         <RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion>
         <FileAlignment>512</FileAlignment>
@@ -20,6 +20,7 @@
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="tests\**\*.cs" />
+        <Compile Remove="linux\**\*.cs" />
         <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
     </ItemGroup>
 </Project>

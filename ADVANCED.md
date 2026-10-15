@@ -12,7 +12,7 @@ The ELF loader port sits beside the deployment checkbox and is disabled when dep
 
 ```json
 {
-  "Host": "192.168.0.100",
+  "Host": "",
   "SendPayload": true,
   "MounterPort": 9090,
   "LoaderPort": 9021,

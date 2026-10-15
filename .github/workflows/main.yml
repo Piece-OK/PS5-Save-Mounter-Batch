@@ -70,6 +70,20 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
+    - name: Install Linux desktop test dependencies
+      run: |
+        sudo apt-get install -y xvfb xauth libfontconfig1 libfreetype6 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 libxcursor1 libice6 libsm6 libgl1
+
+    - name: Verify Linux core and portable application
+      run: |
+        dotnet run --project linux/tests/Linux.Tests.csproj -c Release
+        bash build-linux.sh
+        APPIMAGES=("$PWD"/publish/*-linux-x86_64.AppImage)
+        test "${#APPIMAGES[@]}" -eq 1
+        "${APPIMAGES[0]}" --appimage-extract-and-run --version
+        timeout 60s xvfb-run -a "${APPIMAGES[0]}" --appimage-extract-and-run --smoke "$RUNNER_TEMP/linux-smoke.txt" 2>"$RUNNER_TEMP/linux-smoke.stderr"
+        python3 -c 'import pathlib,sys; result=pathlib.Path(sys.argv[1]).read_text(); errors=pathlib.Path(sys.argv[2]).read_text(); print(result); print(errors,file=sys.stderr); sys.exit(0 if "selection OK" in result and not errors.strip() else 1)' "$RUNNER_TEMP/linux-smoke.txt" "$RUNNER_TEMP/linux-smoke.stderr"
+
     - name: Publish
       run: |
         dotnet publish PS4Saves.csproj --configuration Release \
@@ -77,7 +91,7 @@ jobs:
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
         cp mounter_payload/savemounter.elf ./publish/win-x64/
         cp LICENSE README.md ./publish/win-x64/
-        cp ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
+        cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS4Saves.csproj)
         printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Save-Mounter-Batch/releases/tag/v%s\nDownload corresponding-source.zip from that release. It is not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
@@ -88,7 +102,9 @@ jobs:
     - name: Attest
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+        subject-path: |
+          ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+          ./publish/*-linux-x86_64.AppImage
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -96,6 +112,8 @@ jobs:
         name: save-mounter
         path: |
           ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+          ./publish/*-linux-x86_64.AppImage
+
           ./publish/corresponding-source.zip
 
     - name: Create or Update GitHub Release
@@ -105,10 +123,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         TAG_NAME=${GITHUB_REF#refs/tags/}
+        ASSETS=(./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/*-linux-x86_64.AppImage ./publish/corresponding-source.zip)
         if gh release view "$TAG_NAME" > /dev/null 2>&1; then
           echo "Release $TAG_NAME already exists. Uploading assets..."
-          gh release upload $TAG_NAME ./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/corresponding-source.zip
+          gh release upload "$TAG_NAME" "${ASSETS[@]}"
         else
           echo "Creating new release $TAG_NAME..."
-          gh release create $TAG_NAME --verify-tag -d ./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/corresponding-source.zip --notes "Download the Windows ZIP to run the app. Matching source and build scripts are available separately in corresponding-source.zip on this release."
+          gh release create "$TAG_NAME" --verify-tag --draft --prerelease --latest=false --title "$TAG_NAME" "${ASSETS[@]}" --notes "Download the Windows ZIP or Linux x86_64 AppImage to run the app. Matching source and build scripts are available separately in corresponding-source.zip on this release. See LINUX.md for Linux requirements and validation limits."
         fi

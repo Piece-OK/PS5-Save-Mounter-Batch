@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion>
+    <AssemblyName>PS5SaveMounter.Linux</AssemblyName>
+    <RootNamespace>PS4Saves.Linux</RootNamespace>
+    <Version>1.1-beta1</Version>
+    <DebugType Condition="'$(Configuration)' == 'Release'">None</DebugType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="tests/**/*.cs" />
+    <Compile Include="../DumpEngine.cs;../BackupPresentation.cs;../ElfldrClient.cs;../MounterClient.cs;../GameSorting.cs;../GameTitleCatalog.cs;../Ps4TitleLookup.cs;../DumperModels.cs" Link="Core/%(Filename)%(Extension)" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <None Include="../mounter_payload/savemounter.elf" Link="savemounter.elf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Condition="Exists('../mounter_payload/savemounter.elf')" />
+  </ItemGroup>
+</Project>

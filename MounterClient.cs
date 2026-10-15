@@ -55,6 +55,25 @@ public class MounterClient : IDisposable
         }
     }
 
+    // Call only while no other protocol operation is in progress on this session.
+    public void Ping(int timeoutMilliseconds = 3000)
+    {
+        if (_tcp == null || _stream == null) throw new IOException("Not connected");
+        if (timeoutMilliseconds < 1) throw new ArgumentOutOfRangeException(nameof(timeoutMilliseconds));
+        int receiveTimeout = _tcp.ReceiveTimeout, sendTimeout = _tcp.SendTimeout;
+        try
+        {
+            _tcp.ReceiveTimeout = _tcp.SendTimeout = timeoutMilliseconds;
+            SendCommand("PING");
+            if (ReadLine() != "OK") throw new IOException("Unexpected mounter PING response");
+        }
+        finally
+        {
+            _tcp.ReceiveTimeout = receiveTimeout;
+            _tcp.SendTimeout = sendTimeout;
+        }
+    }
+
     public void Disconnect()
     {
         try
