@@ -22,6 +22,9 @@ PS5 saves are normally encrypted. “Mounting” a save lets the console open it
 
 To back up another console user’s saves, select that user and repeat steps 4–5.
 
-## Planned features
+## TODO
 
-- Restore backed-up saves to the console. Restoring is not supported yet.
+- [ ] Restore backed-up saves to the console. Restoring is not supported yet.
+- [ ] Add linux support
+- [ ] Maybe add a feature to dump the medialibrary content of the PS5
+- [ ] Add Support PS4
