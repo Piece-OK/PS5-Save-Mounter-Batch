@@ -18,5 +18,5 @@ $version = $project.Project.PropertyGroup.Version | Where-Object { $_ } | Select
 @"
 Matching source code and build scripts for version ${version}:
 https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v$version
-Download corresponding-source.zip from that release. It is not needed to run the app.
+Download GitHub's automatic Source code (zip) or Source code (tar.gz) from that release. These include build scripts and upstream source snapshots and are not needed to run the app.
 "@ | Set-Content -LiteralPath (Join-Path $OutputPath 'SOURCE-CODE.txt') -Encoding utf8

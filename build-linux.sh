@@ -62,10 +62,10 @@ done
 cp -R -- "$root/Licenses" "$docs/"
 version="$("$dotnet" msbuild "$project" -getProperty:Version -nologo)"
 [[ "$version" =~ ^[a-zA-Z0-9.+-]+$ ]] || { echo 'Invalid version' >&2; exit 1; }
-printf 'Matching source and build scripts must accompany this binary release.\nVersion: %s\nRelease: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload corresponding-source.zip from that release.\n' "$version" "$version" > "$docs/SOURCE-CODE.txt"
+printf 'Matching source and build scripts:\nVersion: %s\nRelease: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload the automatic Source code (zip) or Source code (tar.gz) from that release. Build scripts and upstream source snapshots are included.\n' "$version" "$version" > "$docs/SOURCE-CODE.txt"
 # Preserve embedded package notices and a path-free resolved dependency inventory.
 python3 "$root/packaging/collect-licenses.py" "$root/linux/obj/project.assets.json" "$docs/NuGet"
-artifact="$output/PS5-Savefile-Batcher-$version-linux-x86_64.AppImage"
+artifact="$output/PS5-Savefile-Batcher-linux-x86_64-v$version.AppImage"
 ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGETOOL" --no-appstream --comp zstd \
     --runtime-file "$APPIMAGE_RUNTIME" "$appdir" "$artifact"
 chmod +x "$artifact"

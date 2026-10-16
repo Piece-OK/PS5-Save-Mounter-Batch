@@ -6,12 +6,12 @@ application remains a separate build; Wine is not required.
 
 ## Run
 
-Download `PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage`, make it
+Download `PS5-Savefile-Batcher-linux-x86_64-v<version>.AppImage`, make it
 executable in your file manager (Properties → Permissions) or run:
 
 ```bash
-chmod +x PS5-Savefile-Batcher-*-linux-x86_64.AppImage
-./PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage
+chmod +x PS5-Savefile-Batcher-linux-x86_64-v*.AppImage
+./PS5-Savefile-Batcher-linux-x86_64-v<version>.AppImage
 ```
 
 Use an x86_64 Linux desktop with X11 or XWayland, fontconfig, FreeType, ICU,
@@ -22,7 +22,7 @@ and native Wayland-only sessions are not targets of this first build.
 If the system cannot mount AppImages using FUSE, run without FUSE:
 
 ```bash
-./PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage --appimage-extract-and-run
+./PS5-Savefile-Batcher-linux-x86_64-v<version>.AppImage --appimage-extract-and-run
 ```
 
 The console requirements are unchanged: a compatible jailbroken PS5, elfldr,
@@ -132,8 +132,10 @@ successful result and empty stderr rather than trusting exit code 0 alone.
 
 ## Release packages
 
-The release workflow builds both the Windows ZIP and the Linux AppImage,
-alongside `corresponding-source.zip`. Checksums are generated for local build
+The release workflow builds the versioned Windows ZIP and Linux AppImage.
+Matching source, build scripts and upstream source snapshots are included in
+GitHub's automatic **Source code (zip)** and **Source code (tar.gz)** downloads
+on the same release page. Checksums are generated for local build
 verification but are not attached as separate release downloads. New tagged
 builds are staged as draft pre-releases for review before publication.
 Nothing is uploaded by a local build. Do not publish the Linux binary without

@@ -8,7 +8,7 @@ namespace PS5SavefileBatcher;
 
 public static class BuildInfo
 {
-    public const string Version = "1.1-beta1";
+    public const string Version = "1.1";
     public const string PayloadFile = "savemounter.elf";
 }
 public static class UserLabel

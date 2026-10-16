@@ -5,7 +5,7 @@
     <RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion>
     <AssemblyName>PS5SavefileBatcher.Linux</AssemblyName>
     <RootNamespace>PS5SavefileBatcher.Linux</RootNamespace>
-    <Version>1.1-beta1</Version>
+    <Version>1.1</Version>
     <DebugType Condition="'$(Configuration)' == 'Release'">None</DebugType>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>

@@ -79,7 +79,7 @@ jobs:
       run: |
         dotnet run --project linux/tests/Linux.Tests.csproj -c Release
         bash build-linux.sh
-        APPIMAGES=("$PWD"/publish/*-linux-x86_64.AppImage)
+        APPIMAGES=("$PWD"/publish/*-linux-x86_64-v*.AppImage)
         test "${#APPIMAGES[@]}" -eq 1
         "${APPIMAGES[0]}" --appimage-extract-and-run --version
         timeout 60s xvfb-run -a "${APPIMAGES[0]}" --appimage-extract-and-run --smoke "$RUNNER_TEMP/linux-smoke.txt" 2>"$RUNNER_TEMP/linux-smoke.stderr"
@@ -95,27 +95,24 @@ jobs:
         cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS5SavefileBatcher.csproj)
-        printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload corresponding-source.zip from that release. It is not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
-        git archive --format=zip HEAD -o ./publish/corresponding-source.zip
+        printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload the automatic Source code (zip) or Source code (tar.gz) from that release. Build scripts and upstream source snapshots are included; they are not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
         cd ./publish/win-x64
-        zip -r ../PS5-Savefile-Batcher-win-x64.zip ./*
+        zip -r "../PS5-Savefile-Batcher-win-x64-v${VERSION}.zip" ./*
 
     - name: Attest
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: |
-          ./publish/PS5-Savefile-Batcher-win-x64.zip
-          ./publish/*-linux-x86_64.AppImage
+          ./publish/PS5-Savefile-Batcher-win-x64-v*.zip
+          ./publish/*-linux-x86_64-v*.AppImage
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: save-mounter
         path: |
-          ./publish/PS5-Savefile-Batcher-win-x64.zip
-          ./publish/*-linux-x86_64.AppImage
-
-          ./publish/corresponding-source.zip
+          ./publish/PS5-Savefile-Batcher-win-x64-v*.zip
+          ./publish/*-linux-x86_64-v*.AppImage
 
     - name: Create or Update GitHub Release
       if: startsWith(github.ref, 'refs/tags/')
@@ -124,11 +121,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         TAG_NAME=${GITHUB_REF#refs/tags/}
-        ASSETS=(./publish/PS5-Savefile-Batcher-win-x64.zip ./publish/*-linux-x86_64.AppImage ./publish/corresponding-source.zip)
+        ASSETS=(./publish/PS5-Savefile-Batcher-win-x64-v*.zip ./publish/*-linux-x86_64-v*.AppImage)
         if gh release view "$TAG_NAME" > /dev/null 2>&1; then
           echo "Release $TAG_NAME already exists. Uploading assets..."
           gh release upload "$TAG_NAME" "${ASSETS[@]}"
         else
           echo "Creating new release $TAG_NAME..."
-          gh release create "$TAG_NAME" --verify-tag --draft --prerelease --latest=false --title "$TAG_NAME" "${ASSETS[@]}" --notes "Download the Windows ZIP or Linux x86_64 AppImage to run the app. Matching source and build scripts are available separately in corresponding-source.zip on this release. See LINUX.md for Linux requirements and validation limits."
+          gh release create "$TAG_NAME" --verify-tag --draft --prerelease --latest=false --title "$TAG_NAME" "${ASSETS[@]}" --notes "Download the versioned Windows ZIP or Linux x86_64 AppImage to run the app. Matching source, build scripts and upstream source snapshots are included in GitHub's automatic Source code (zip/tar.gz) downloads on this release. See LINUX.md for Linux requirements and validation limits."
         fi
