@@ -24,6 +24,7 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Verify client and batch behavior
+      timeout-minutes: 3
       run: dotnet run --project tests/Dumper.Tests.csproj -c Release
     - name: Verify compressed portable executable
       shell: pwsh
