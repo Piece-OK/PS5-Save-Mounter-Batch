@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <RootNamespace>PS4Saves</RootNamespace>
-        <AssemblyName>PS5 Save Mounter Batch</AssemblyName>
-        <Product>PS5 Save Mounter Batch</Product>
-        <Title>PS5 Save Mounter Batch</Title>
+        <RootNamespace>PS5SavefileBatcher</RootNamespace>
+        <AssemblyName>PS5 Savefile Batcher</AssemblyName>
+        <Product>PS5 Savefile Batcher</Product>
+        <Title>PS5 Savefile Batcher</Title>
         <Description>Batch save backups based on PlayStation 5 Save Mounter.</Description>
         <Version>1.1-beta1</Version>
         <FileVersion>1.1.0.0</FileVersion>

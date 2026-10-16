@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 // Owner drawing keeps the completion color independent of the Windows accent/theme.
 public sealed class BatchProgressBar : Control

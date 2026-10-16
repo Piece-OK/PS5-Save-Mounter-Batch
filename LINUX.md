@@ -6,12 +6,12 @@ application remains a separate build; Wine is not required.
 
 ## Run
 
-Download `PS5-Save-Mounter-Batch-<version>-linux-x86_64.AppImage`, make it
+Download `PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage`, make it
 executable in your file manager (Properties → Permissions) or run:
 
 ```bash
-chmod +x PS5-Save-Mounter-Batch-*-linux-x86_64.AppImage
-./PS5-Save-Mounter-Batch-<version>-linux-x86_64.AppImage
+chmod +x PS5-Savefile-Batcher-*-linux-x86_64.AppImage
+./PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage
 ```
 
 Use an x86_64 Linux desktop with X11 or XWayland, fontconfig, FreeType, ICU,
@@ -22,7 +22,7 @@ and native Wayland-only sessions are not targets of this first build.
 If the system cannot mount AppImages using FUSE, run without FUSE:
 
 ```bash
-./PS5-Save-Mounter-Batch-<version>-linux-x86_64.AppImage --appimage-extract-and-run
+./PS5-Savefile-Batcher-<version>-linux-x86_64.AppImage --appimage-extract-and-run
 ```
 
 The console requirements are unchanged: a compatible jailbroken PS5, elfldr,
@@ -40,9 +40,9 @@ Do not package your user-data folders in a release.
 
 Default locations (absolute XDG overrides are honored):
 
-- Settings: `~/.config/ps5-save-mounter-batch/settings.json`
-- Title caches: `~/.cache/ps5-save-mounter-batch/`
-- Logs: `~/.local/state/ps5-save-mounter-batch/logs/`
+- Settings: `~/.config/ps5-savefile-batcher/settings.json`
+- Title caches: `~/.cache/ps5-savefile-batcher/`
+- Logs: `~/.local/state/ps5-savefile-batcher/logs/`
 - Backups: `PS5-Backups/` beside the actual AppImage. For example, an AppImage
   in `/home/example/Downloads/` defaults to `/home/example/Downloads/PS5-Backups/`.
   This uses the AppImage runtime's absolute `APPIMAGE` path, not the current
@@ -67,7 +67,7 @@ The bundled payload listens on the fixed mounter port 9090, so the Linux GUI
 does not offer a mounter-port setting and always targets that port. The ELF
 loader port remains configurable. **FTP override (0 = embedded)** is retained
 for compatible external FTP servers. A configuration file does exist:
-`~/.config/ps5-save-mounter-batch/settings.json` (or the corresponding
+`~/.config/ps5-savefile-batcher/settings.json` (or the corresponding
 `XDG_CONFIG_HOME` location). Close the application before editing it manually.
 
 On both platforms the progress bar turns green only after the complete batch

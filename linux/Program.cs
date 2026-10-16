@@ -7,7 +7,7 @@ using System.Text.Json;
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Linux.Tests")]
 
-namespace PS4Saves.Linux;
+namespace PS5SavefileBatcher.Linux;
 
 internal static class Program
 {
@@ -20,7 +20,7 @@ internal static class Program
             if (args.Length > 0)
             {
                 if (args[0] == "--version") { Console.WriteLine(BuildInfo.Version + " (Linux)"); return 0; }
-                if (args[0] is "--help" or "-h") { Console.WriteLine("PS5 Save Mounter Batch (Linux)\nNo arguments: open GUI\n--version\n--help\n--smoke [result.txt]  Open the real GUI, check SQLite and close; no console connection\n--inventory result.json host\n--dump result.json host userHex game save1,save2 destination\nConnection/deployment preferences: XDG_CONFIG_HOME/ps5-save-mounter-batch/settings.json\n--dump writes backups and temporarily mounts saves; Ctrl+C cancels with unmount cleanup."); return 0; }
+                if (args[0] is "--help" or "-h") { Console.WriteLine("PS5 Savefile Batcher (Linux)\nNo arguments: open GUI\n--version\n--help\n--smoke [result.txt]  Open the real GUI, check SQLite and close; no console connection\n--inventory result.json host\n--dump result.json host userHex game save1,save2 destination\nConnection/deployment preferences: XDG_CONFIG_HOME/ps5-savefile-batcher/settings.json\n--dump writes backups and temporarily mounts saves; Ctrl+C cancels with unmount cleanup."); return 0; }
                 if (args[0] == "--smoke" && args.Length <= 2) SmokeOutput = args.Length == 2 ? Path.GetFullPath(args[1]) : Path.Combine(LinuxPaths.Current.Cache, "smoke-result.txt");
                 else return Diagnostics.Run(args);
             }

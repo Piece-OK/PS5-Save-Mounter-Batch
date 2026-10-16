@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 public class DumperForm : Form
 {
     private readonly TextBox host = new() { Width = 150, AccessibleName = "PS5 address" };
@@ -61,7 +61,7 @@ public class DumperForm : Form
 
     public DumperForm()
     {
-        Text = "PS5 Save Mounter Batch — " + BuildInfo.Version; Font = new Font("Segoe UI", 10);
+        Text = "PS5 Savefile Batcher — " + BuildInfo.Version; Font = new Font("Segoe UI", 10);
         ClientSize = new Size(1160, 880); MinimumSize = new Size(1050, 780); StartPosition = FormStartPosition.CenterScreen;
         DumperSettings s;
         try { s = JsonSerializer.Deserialize<DumperSettings>(File.ReadAllText(settingsPath)) ?? new(); } catch { s = new(); }
@@ -71,7 +71,7 @@ public class DumperForm : Form
         var layout = new TableLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(16), ColumnCount = 1, RowCount = 12 };
         for (int i = 0; i < 12; i++) layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles[7] = new RowStyle(SizeType.Percent, 70); layout.RowStyles[10] = new RowStyle(SizeType.Percent, 30);
-        layout.Controls.Add(new Label { Text = "PS5 SAVE MOUNTER BATCH", Font = new Font("Segoe UI", 20, FontStyle.Bold), AutoSize = true }, 0, 0);
+        layout.Controls.Add(new Label { Text = "PS5 SAVEFILE BATCHER", Font = new Font("Segoe UI", 20, FontStyle.Bold), AutoSize = true }, 0, 0);
         var connection = Row();
         connection.Controls.AddRange(new Control[] { Label("PS5 address"), host, deploy, loaderLabel, loaderPort, connect });
         deploy.Margin = new Padding(10, 8, 8, 3);

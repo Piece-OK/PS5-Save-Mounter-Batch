@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 public static class ElfldrClient
 {

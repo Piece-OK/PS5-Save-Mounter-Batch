@@ -3,7 +3,7 @@
 set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 dotnet="${DOTNET:-dotnet}"
-project="$root/linux/PS5SaveMounter.Linux.csproj"
+project="$root/linux/PS5SavefileBatcher.Linux.csproj"
 output="${1:-$root/publish}"
 mkdir -p -- "$output"
 output="$(cd -- "$output" && pwd)"
@@ -43,29 +43,29 @@ if [[ -z ${APPIMAGE_RUNTIME:-} ]]; then
 fi
 work="$(mktemp -d "$output/.linux-build.XXXXXXXX")"
 trap 'rm -rf -- "$work"' EXIT
-appdir="$work/PS5-Save-Mounter-Batch.AppDir"
-mkdir -p "$appdir/usr/bin" "$appdir/usr/share/doc/ps5-save-mounter-batch" "$appdir/usr/share/applications" "$appdir/usr/share/icons/hicolor/scalable/apps"
+appdir="$work/PS5-Savefile-Batcher.AppDir"
+mkdir -p "$appdir/usr/bin" "$appdir/usr/share/doc/ps5-savefile-batcher" "$appdir/usr/share/applications" "$appdir/usr/share/icons/hicolor/scalable/apps"
 "$dotnet" publish "$project" -c Release -r linux-x64 --self-contained true \
     -p:PublishSingleFile=false -p:PublishTrimmed=false -o "$appdir/usr/bin"
 cp -- "$payload" "$appdir/usr/bin/savemounter.elf"
 cp -- "$root/packaging/AppRun" "$appdir/AppRun"
-chmod +x "$appdir/AppRun" "$appdir/usr/bin/PS5SaveMounter.Linux"
-cp -- "$root/packaging/ps5-save-mounter-batch.desktop" "$appdir/"
-cp -- "$root/packaging/ps5-save-mounter-batch.desktop" "$appdir/usr/share/applications/"
-cp -- "$root/packaging/ps5-save-mounter-batch.svg" "$appdir/"
-cp -- "$root/packaging/ps5-save-mounter-batch.svg" "$appdir/usr/share/icons/hicolor/scalable/apps/"
-ln -s ps5-save-mounter-batch.svg "$appdir/.DirIcon"
-docs="$appdir/usr/share/doc/ps5-save-mounter-batch"
+chmod +x "$appdir/AppRun" "$appdir/usr/bin/PS5SavefileBatcher.Linux"
+cp -- "$root/packaging/ps5-savefile-batcher.desktop" "$appdir/"
+cp -- "$root/packaging/ps5-savefile-batcher.desktop" "$appdir/usr/share/applications/"
+cp -- "$root/packaging/ps5-savefile-batcher.svg" "$appdir/"
+cp -- "$root/packaging/ps5-savefile-batcher.svg" "$appdir/usr/share/icons/hicolor/scalable/apps/"
+ln -s ps5-savefile-batcher.svg "$appdir/.DirIcon"
+docs="$appdir/usr/share/doc/ps5-savefile-batcher"
 for file in LICENSE README.md LINUX.md ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md; do
     cp -- "$root/$file" "$docs/"
 done
 cp -R -- "$root/Licenses" "$docs/"
 version="$("$dotnet" msbuild "$project" -getProperty:Version -nologo)"
 [[ "$version" =~ ^[a-zA-Z0-9.+-]+$ ]] || { echo 'Invalid version' >&2; exit 1; }
-printf 'Matching source and build scripts must accompany this binary release.\nVersion: %s\nRelease: https://github.com/Piece-OK/PS5-Save-Mounter-Batch/releases/tag/v%s\nDownload corresponding-source.zip from that release.\n' "$version" "$version" > "$docs/SOURCE-CODE.txt"
+printf 'Matching source and build scripts must accompany this binary release.\nVersion: %s\nRelease: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload corresponding-source.zip from that release.\n' "$version" "$version" > "$docs/SOURCE-CODE.txt"
 # Preserve embedded package notices and a path-free resolved dependency inventory.
 python3 "$root/packaging/collect-licenses.py" "$root/linux/obj/project.assets.json" "$docs/NuGet"
-artifact="$output/PS5-Save-Mounter-Batch-$version-linux-x86_64.AppImage"
+artifact="$output/PS5-Savefile-Batcher-$version-linux-x86_64.AppImage"
 ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGETOOL" --no-appstream --comp zstd \
     --runtime-file "$APPIMAGE_RUNTIME" "$appdir" "$artifact"
 chmod +x "$artifact"

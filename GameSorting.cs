@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 public enum GameSortColumn { Title, Id, Platform, SaveCount }
 public static class GameSorting

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace PS4Saves
+namespace PS5SavefileBatcher
 {
     static class Program
     {

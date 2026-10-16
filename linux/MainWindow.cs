@@ -5,7 +5,7 @@ using Avalonia.Threading;
 using Avalonia.VisualTree;
 using System.Diagnostics;
 
-namespace PS4Saves.Linux;
+namespace PS5SavefileBatcher.Linux;
 
 public sealed class MainWindow : Window
 {
@@ -74,7 +74,7 @@ public sealed class MainWindow : Window
 
     public MainWindow()
     {
-        Title = "PS5 Save Mounter Batch — Linux " + BuildInfo.Version;
+        Title = "PS5 Savefile Batcher — Linux " + BuildInfo.Version;
         Width = 1200; Height = 920; MinWidth = 1050; MinHeight = 780;
         paths.EnsureDirectories();
         sessionLog = Path.Combine(paths.Logs, $"session_{DateTime.Now:yyyyMMdd_HHmmss}_{Guid.NewGuid():N}.log");
@@ -99,7 +99,7 @@ public sealed class MainWindow : Window
         Grid.SetColumn(browse, 2); folder.Children.Add(browse); Grid.SetColumn(reset, 3); folder.Children.Add(reset); folder.Margin = new Thickness(0, 0, 0, 10);
         var options = Row(includeTitle);
         var actions = Row(all, none, expand, collapse, dump, cancel);
-        var header = new StackPanel { Spacing = 3, Children = { new TextBlock { Text = "PS5 SAVE MOUNTER BATCH", FontSize = 24, Margin = new Thickness(0, 0, 0, 12) }, connection, ports, sources, userRow, folder, options, actions, selection } };
+        var header = new StackPanel { Spacing = 3, Children = { new TextBlock { Text = "PS5 SAVEFILE BATCHER", FontSize = 24, Margin = new Thickness(0, 0, 0, 12) }, connection, ports, sources, userRow, folder, options, actions, selection } };
         Cell(tableHeader, Label("Choose"), 0);
         string[] columns = { "Game / save", "Title ID", "Platform", "Save count / selected" };
         foreach (var column in Enum.GetValues<GameSortColumn>())

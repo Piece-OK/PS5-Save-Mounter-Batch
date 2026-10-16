@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 // Fetches title facts only. No website/emulator code, covers or compatibility reports are incorporated.
 public sealed class GameTitleCatalog
@@ -85,7 +85,7 @@ public sealed class GameTitleCatalog
             timeout.CancelAfter(TimeSpan.FromSeconds(12));
             var fetchToken = timeout.Token;
             using var request = new HttpRequestMessage(HttpMethod.Get, url);
-            request.Headers.UserAgent.ParseAdd("PS5SaveMounterBatch/" + BuildInfo.Version);
+            request.Headers.UserAgent.ParseAdd("PS5SavefileBatcherBatch/" + BuildInfo.Version);
             using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, fetchToken);
             response.EnsureSuccessStatusCode();
             if (response.Content.Headers.ContentLength > Limit) throw new IOException("Title database exceeds size limit");

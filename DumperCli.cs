@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 // Scriptable diagnostics use the same connection and batch engine as the GUI.
 public static class DumperCli
 {

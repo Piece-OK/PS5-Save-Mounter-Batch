@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Net.Sockets;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 public record SaveJob(int UserId, string Game, string Directory, string Title = "", string Subtitle = "");
 public record RemoteEntry(string Name, bool IsDirectory, long Size);

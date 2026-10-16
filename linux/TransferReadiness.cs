@@ -1,4 +1,4 @@
-namespace PS4Saves.Linux;
+namespace PS5SavefileBatcher.Linux;
 
 public static class TransferReadiness
 {

@@ -1,4 +1,4 @@
-namespace PS4Saves.Linux;
+namespace PS5SavefileBatcher.Linux;
 
 public sealed record LinuxPaths(string Config, string Cache, string Logs, string Backups)
 {
@@ -8,7 +8,7 @@ public sealed record LinuxPaths(string Config, string Cache, string Logs, string
     public static LinuxPaths FromEnvironment(string home, Func<string, string> env)
     {
         string Root(string key, string fallback) => env(key) is string v && Path.IsPathFullyQualified(v) ? v : Path.Combine(home, fallback);
-        const string app = "ps5-save-mounter-batch";
+        const string app = "ps5-savefile-batcher";
         string image = env("APPIMAGE");
         string appDirectory = !string.IsNullOrWhiteSpace(image) && Path.IsPathFullyQualified(image)
             ? Path.GetDirectoryName(image) : AppContext.BaseDirectory;

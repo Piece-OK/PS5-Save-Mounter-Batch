@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using Microsoft.Data.Sqlite;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 public class MounterClient : IDisposable
 {

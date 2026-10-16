@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 // Name facts from the same JSON endpoint used by the official compatibility page.
 // Queries contain only a validated missing CUSA ID; no save/user data is uploaded.
@@ -38,7 +38,7 @@ public sealed class Ps4TitleLookup(Func<string, CancellationToken, Task<string>>
     private static async Task<string> Fetch(string id, CancellationToken token)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, Endpoint + Uri.EscapeDataString(id));
-        request.Headers.UserAgent.ParseAdd("PS5SaveMounterBatch/" + BuildInfo.Version);
+        request.Headers.UserAgent.ParseAdd("PS5SavefileBatcherBatch/" + BuildInfo.Version);
         using var response = await http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
         response.EnsureSuccessStatusCode();
         if (response.Content.Headers.ContentLength > 1024*1024) throw new IOException("shadPS4 response exceeds size limit");

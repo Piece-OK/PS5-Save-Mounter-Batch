@@ -29,9 +29,9 @@ jobs:
     - name: Verify compressed portable executable
       shell: pwsh
       run: |
-        dotnet publish PS4Saves.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./smoke-package
+        dotnet publish PS5SavefileBatcher.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o ./smoke-package
         if ($LASTEXITCODE -ne 0) { throw 'Portable build failed' }
-        $app = Join-Path $PWD 'smoke-package/PS5 Save Mounter Batch.exe'
+        $app = Join-Path $PWD 'smoke-package/PS5 Savefile Batcher.exe'
         $process = Start-Process -FilePath $app -ArgumentList '--smoke smoke-result.txt' -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru
         if (-not $process.WaitForExit(30000)) { $process.Kill(); throw 'Portable smoke test timed out' }
         if ($process.ExitCode -ne 0) { throw 'Portable smoke test failed' }
@@ -87,24 +87,24 @@ jobs:
 
     - name: Publish
       run: |
-        dotnet publish PS4Saves.csproj --configuration Release \
+        dotnet publish PS5SavefileBatcher.csproj --configuration Release \
           -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
         cp mounter_payload/savemounter.elf ./publish/win-x64/
         cp LICENSE README.md ./publish/win-x64/
         cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
-        VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS4Saves.csproj)
-        printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Save-Mounter-Batch/releases/tag/v%s\nDownload corresponding-source.zip from that release. It is not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
+        VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS5SavefileBatcher.csproj)
+        printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload corresponding-source.zip from that release. It is not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
         git archive --format=zip HEAD -o ./publish/corresponding-source.zip
         cd ./publish/win-x64
-        zip -r ../PS5-Save-Mounter-Batch-win-x64.zip ./*
+        zip -r ../PS5-Savefile-Batcher-win-x64.zip ./*
 
     - name: Attest
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: |
-          ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+          ./publish/PS5-Savefile-Batcher-win-x64.zip
           ./publish/*-linux-x86_64.AppImage
 
     - name: Upload artifacts
@@ -112,7 +112,7 @@ jobs:
       with:
         name: save-mounter
         path: |
-          ./publish/PS5-Save-Mounter-Batch-win-x64.zip
+          ./publish/PS5-Savefile-Batcher-win-x64.zip
           ./publish/*-linux-x86_64.AppImage
 
           ./publish/corresponding-source.zip
@@ -124,7 +124,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         TAG_NAME=${GITHUB_REF#refs/tags/}
-        ASSETS=(./publish/PS5-Save-Mounter-Batch-win-x64.zip ./publish/*-linux-x86_64.AppImage ./publish/corresponding-source.zip)
+        ASSETS=(./publish/PS5-Savefile-Batcher-win-x64.zip ./publish/*-linux-x86_64.AppImage ./publish/corresponding-source.zip)
         if gh release view "$TAG_NAME" > /dev/null 2>&1; then
           echo "Release $TAG_NAME already exists. Uploading assets..."
           gh release upload "$TAG_NAME" "${ASSETS[@]}"

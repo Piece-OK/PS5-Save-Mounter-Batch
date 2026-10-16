@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 #endif
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 #if !WINDOWS
 public enum CheckState { Unchecked, Checked, Indeterminate }
 #endif

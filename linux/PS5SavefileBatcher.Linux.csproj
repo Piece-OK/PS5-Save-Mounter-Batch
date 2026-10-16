@@ -3,8 +3,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <RuntimeFrameworkVersion>10.0.12</RuntimeFrameworkVersion>
-    <AssemblyName>PS5SaveMounter.Linux</AssemblyName>
-    <RootNamespace>PS4Saves.Linux</RootNamespace>
+    <AssemblyName>PS5SavefileBatcher.Linux</AssemblyName>
+    <RootNamespace>PS5SavefileBatcher.Linux</RootNamespace>
     <Version>1.1-beta1</Version>
     <DebugType Condition="'$(Configuration)' == 'Release'">None</DebugType>
     <ImplicitUsings>enable</ImplicitUsings>

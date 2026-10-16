@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PS4Saves;
+namespace PS5SavefileBatcher;
 
 public static class BuildInfo
 {

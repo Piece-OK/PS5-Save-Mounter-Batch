@@ -1,4 +1,4 @@
-/* PS5 Save Mounter Batch embedded read-only FTP, GPL-3.0-or-later.
+/* PS5 Savefile Batcher embedded read-only FTP, GPL-3.0-or-later.
  * PASV socket/address construction adapted from ps5-payload-dev/ftpsrv cmd.c
  * Copyright (C) 2023 John Törnblom. See SOURCES.md for pinned origin and changes.
  * Only the mounted save is exposed. No filesystem mutation or SELF conversion.
@@ -131,7 +131,7 @@ static int send_listing(int fd, const char *path) {
 }
 static void session(int c, uint32_t peer) {
     char cwd[2048]="/",line[4096],path[2048];int passive=-1,binary=0;
-    timeouts(c);if(reply(c,"220 PS5 Save Mounter Batch read-only FTP 0.1.0-dev.5\r\n"))return;
+    timeouts(c);if(reply(c,"220 PS5 Savefile Batcher read-only FTP 0.1.0-dev.5\r\n"))return;
     while(!line_read(c,line,sizeof(line))) {
         char *arg=strchr(line,' ');if(arg)*arg++=0;else arg=line+strlen(line);
         pthread_mutex_lock(&batch_mount_mutex);

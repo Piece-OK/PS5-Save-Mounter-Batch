@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=PS5 Save Mounter Batch
+Name=PS5 Savefile Batcher
 Comment=Back up saves from a jailbroken PS5
-Exec=PS5SaveMounter.Linux
-Icon=ps5-save-mounter-batch
+Exec=PS5SavefileBatcher.Linux
+Icon=ps5-savefile-batcher
 Categories=Utility;Archiving;
 Terminal=false
 StartupNotify=true
