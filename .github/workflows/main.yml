@@ -42,6 +42,29 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Prepare concise changelog notes
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        python3 - <<'PY'
+        import os
+        from pathlib import Path
+        version = os.environ['GITHUB_REF_NAME'].removeprefix('v')
+        lines = Path('CHANGELOG.md').read_text(encoding='utf-8').splitlines()
+        heading = '## ' + version
+        if lines.count(heading) != 1:
+            raise SystemExit('Add one CHANGELOG.md entry for ' + version + ' before releasing.')
+        entry = []
+        for line in lines[lines.index(heading) + 1:]:
+            if line.startswith('## '):
+                break
+            entry.append(line)
+        notes = '\n'.join(entry).strip()
+        if not any(line.startswith('- ') for line in entry):
+            raise SystemExit('The release changelog must contain actual changes.')
+        notes = '## Changes\n\n' + notes + '\n\nDownload the Windows ZIP or Linux x86_64 AppImage. Matching source archives are available below.\n'
+        Path(os.environ['RUNNER_TEMP'], 'release-notes.md').write_text(notes, encoding='utf-8')
+        PY
+
     - name: Install toolchain dependencies
       run: |
         sudo apt-get update
@@ -89,7 +112,7 @@ jobs:
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
         cp mounter_payload/savemounter.elf ./publish/win-x64/
         cp LICENSE README.md ./publish/win-x64/
-        cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md ./publish/win-x64/
+        cp CHANGELOG.md ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS5SavefileBatcher.csproj)
         printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload the automatic Source code (zip) or Source code (tar.gz) from that release. Build scripts and upstream source snapshots are included; they are not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt
@@ -122,7 +145,8 @@ jobs:
         if gh release view "$TAG_NAME" > /dev/null 2>&1; then
           echo "Release $TAG_NAME already exists. Uploading assets..."
           gh release upload "$TAG_NAME" "${ASSETS[@]}"
+          gh release edit "$TAG_NAME" --notes-file "$RUNNER_TEMP/release-notes.md"
         else
           echo "Creating new release $TAG_NAME..."
-          gh release create "$TAG_NAME" --verify-tag --draft --prerelease --latest=false --title "$TAG_NAME" "${ASSETS[@]}" --notes "Download the versioned Windows ZIP or Linux x86_64 AppImage to run the app. Matching source, build scripts and upstream source snapshots are included in GitHub's automatic Source code (zip/tar.gz) downloads on this release. See LINUX.md for Linux requirements and validation limits."
+          gh release create "$TAG_NAME" --verify-tag --draft --prerelease --latest=false --title "$TAG_NAME" "${ASSETS[@]}" --notes-file "$RUNNER_TEMP/release-notes.md"
         fi

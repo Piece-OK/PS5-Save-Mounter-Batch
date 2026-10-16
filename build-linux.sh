@@ -56,7 +56,7 @@ cp -- "$root/packaging/ps5-savefile-batcher.svg" "$appdir/"
 cp -- "$root/packaging/ps5-savefile-batcher.svg" "$appdir/usr/share/icons/hicolor/scalable/apps/"
 ln -s ps5-savefile-batcher.svg "$appdir/.DirIcon"
 docs="$appdir/usr/share/doc/ps5-savefile-batcher"
-for file in LICENSE README.md LINUX.md ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md; do
+for file in LICENSE README.md CHANGELOG.md LINUX.md ADVANCED.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md; do
     cp -- "$root/$file" "$docs/"
 done
 cp -R -- "$root/Licenses" "$docs/"
