@@ -30,3 +30,8 @@ Tested on firmware 13.60 and 4.03.
 - [ ] Restore backed-up saves to the console. Restoring is not supported yet.
 - [x] Add Linux support
 - [ ] Add support for PS4 systems
+
+<img width="800" alt="Screenshot 2026-10-16 103112" src="https://github.com/user-attachments/assets/00acea1a-6ed1-427f-acaf-edbc7e8e6063" />
+
+
+<img width="800" alt="Screenshot 2026-10-16 103657" src="https://github.com/user-attachments/assets/38b1763e-4884-4bb2-b208-6779d83ff2b8" />
