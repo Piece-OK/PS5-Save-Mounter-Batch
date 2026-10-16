@@ -344,3 +344,9 @@ mounter_payload/savemounter.elf
 *.AppImage.sha256
 /.build-tools/
 /linux/.avalonia-build-tasks/
+
+# Keep development tests and validation notes local, not in public source archives.
+/tests/
+/linux/tests/
+/VALIDATION.md
+/packaging/verification.Dockerfile

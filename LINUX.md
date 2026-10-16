@@ -96,7 +96,6 @@ Builds only download dependencies/tools; neither script deploys or uploads.
 export PS5_PAYLOAD_SDK=/absolute/path/to/ps5-payload-sdk
 bash build-payload.sh
 
-dotnet run --project linux/tests/Linux.Tests.csproj -c Release
 bash build-linux.sh
 ```
 
@@ -142,5 +141,9 @@ Nothing is uploaded by a local build. Do not publish the Linux binary without
 the matching source archive and license notices. Personal settings, console
 addresses, custom FTP overrides, logs, caches and backups are never included.
 
-See `VALIDATION.md` for actual checks and limits. A loopback test or a successful
+Development test projects and detailed validation notes are maintained locally,
+not included in public source archives. Release CI still builds both platforms
+and verifies the packaged applications' GUI/SQLite smoke checks. A successful
 GUI startup does not establish that a real PS5 session succeeds on Linux.
+Restore/resigning, power-loss recovery, ARM64 and native Wayland-only sessions
+are not verified.

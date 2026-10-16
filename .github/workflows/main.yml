@@ -16,16 +16,14 @@ permissions:
   contents: write
 
 jobs:
-  windows_tests:
+  windows_verify:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
-    - name: Verify client and batch behavior
-      timeout-minutes: 3
-      run: dotnet run --project tests/Dumper.Tests.csproj -c Release
+
     - name: Verify compressed portable executable
       shell: pwsh
       run: |
@@ -38,7 +36,7 @@ jobs:
         Get-Content (Join-Path $env:RUNNER_TEMP 'smoke-result.txt')
 
   build_and_release:
-    needs: windows_tests
+    needs: windows_verify
     runs-on: ubuntu-24.04
 
     steps:
@@ -75,9 +73,8 @@ jobs:
       run: |
         sudo apt-get install -y xvfb xauth libfontconfig1 libfreetype6 libx11-6 libxext6 libxrender1 libxrandr2 libxi6 libxcursor1 libice6 libsm6 libgl1
 
-    - name: Verify Linux core and portable application
+    - name: Verify Linux portable application
       run: |
-        dotnet run --project linux/tests/Linux.Tests.csproj -c Release
         bash build-linux.sh
         APPIMAGES=("$PWD"/publish/*-linux-x86_64-v*.AppImage)
         test "${#APPIMAGES[@]}" -eq 1
@@ -92,7 +89,7 @@ jobs:
           -p:EnableWindowsTargeting=true --output ./publish/win-x64
         cp mounter_payload/savemounter.elf ./publish/win-x64/
         cp LICENSE README.md ./publish/win-x64/
-        cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md VALIDATION.md ./publish/win-x64/
+        cp ADVANCED.md LINUX.md README.upstream.md SOURCES.md THIRD-PARTY-NOTICES.md ./publish/win-x64/
         cp -r Licenses ./publish/win-x64/
         VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' PS5SavefileBatcher.csproj)
         printf 'Matching source code and build scripts: https://github.com/Piece-OK/PS5-Savefile-Batcher/releases/tag/v%s\nDownload the automatic Source code (zip) or Source code (tar.gz) from that release. Build scripts and upstream source snapshots are included; they are not needed to run the app.\n' "$VERSION" > ./publish/win-x64/SOURCE-CODE.txt

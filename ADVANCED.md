@@ -68,7 +68,6 @@ Install the .NET 10 SDK, LLVM 18.1.8 and PS5 payload SDK v0.44. SDK and ftpsrv s
 
 ```powershell
 ./build-payload.ps1 -SdkPath 'C:\path\ps5-payload-sdk' -LlvmBin 'C:\path\llvm\bin'
-dotnet run --project tests/Dumper.Tests.csproj -c Release
 ./build.ps1
 ```
 
